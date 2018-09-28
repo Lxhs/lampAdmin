@@ -9,66 +9,60 @@
              <th>责任人</th>
              <th>操作</th>
          </tr>
-         <tr>
-             <td>2018-8-19</td>
-             <td>组织职工申述职称技能等级评定</td>
-             <td>组织职工申诉职称技能等级评定</td>
-             <td>未完成</td>
-             <td>方勇</td>
-             <td>修改</td>
-         </tr>
-         <tr>
-             <td>2018-8-19</td>
-             <td>组织职工申述职称技能等级评定</td>
-             <td>组织职工申诉职称技能等级评定</td>
-             <td>未完成</td>
-             <td>方勇</td>
-             <td>修改</td>
-         </tr>
-         <tr>
-             <td>2018-8-19</td>
-             <td>组织职工申述职称技能等级评定</td>
-             <td>组织职工申诉职称技能等级评定</td>
-             <td>未完成</td>
-             <td>方勇</td>
-             <td>
-                 <span>修改</span>
-                 <span style="margin-left: 5px;"  @click="dialogVisible = true">删除</span>
+         <tr v-for="(item,index) in dataList.list" :key="index">
+             <td>{{ item.recordTime | formatDates}}</td>
+             <td style="cursor: pointer;max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; " @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+             <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{item.contentDesc}}</td>
+             <td>{{workSate[item.workState - 1]}}</td>
+             <td>{{item.bookResponsibleNames[0]}}</td>
+             <td >
+                 <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
+                 <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
              </td>
          </tr>
-         <tr>
-             <td>2018-8-19</td>
-             <td>组织职工申述职称技能等级评定</td>
-             <td>组织职工申诉职称技能等级评定</td>
-             <td>未完成</td>
-             <td>方勇</td>
-             <td>修改</td>
-         </tr>
+
      </table>
-     <span id="add" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 1}})">
+     <span id="add" @click="getPush({path:'workAdd',name:'workAdd',params:{isShow: 3}})">
          <img src="../../assets/images/新增_04.png" style="width: 25px">
          新增
      </span>
+     <div class="block">
+         <el-pagination
+                 layout="prev, pager, next"
+                 :total="total"
+                 :page-size="pageSize"
+                 :current-page.sync="currentPage"
+                @current-change="changePage">
+         </el-pagination>
+     </div>
      <el-dialog
              title="提示"
              :visible.sync="dialogVisible"
              width="30%"
              :before-close="handleClose">
-         <span>这是一段信息</span>
+         <span>确定是否删除吗？</span>
          <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            <el-button type="primary" @click="deleteWorkBook">确 定</el-button>
          </span>
      </el-dialog>
  </div>
 </template>
 
 <script>
+import {mapState} from "vuex";
 export default {
     name: "index",
     data() {
       return {
-          dialogVisible: false
+          dialogVisible: false,
+          dataList: {},
+          workSate:['完成','未完成','阶段性完成'],
+          detailContent: '',
+          workBookIds:'',
+          currentPage: 1,
+          pageSize: 5,
+          total: 0,
       }
     },
     methods: {
@@ -85,12 +79,83 @@ export default {
         },
         handleClose(done) {
             this.$confirm('确认关闭？')
-                .then(_ => {
+                .then( _ => {
                     done();
                 })
                 .catch(_ => {});
-        }
+        },
+        getData() {
+            this.axios({
+                method: 'get',
+                url:'/ld/workBook/getWorkBookList',
+                params: {
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    pageNo: this.currentPage,
+                    pageSize: this.pageSize,
+                    keyWord: this.selectList
+                }
+            }).then(res => {
+                console.log(res);
+                this.dataList = res.data.data
+                console.log(this.dataList);
+                this.total = this.dataList.count
 
+                if (JSON.stringify(res.data.data.list) === '[]' ){
+                    this.$message({
+                        message: '暂无数据',
+                        type: 'warning'
+                    });
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        },
+        deleteWorkBook: function () {
+            this.axios({
+                method: 'post',
+                url: '/ld/workBook/deleteWorkBook',
+                data: {
+                    workBookId: this.workBookIds,
+                    userId: 1
+                },
+                transformRequest: [function (data) {
+                    let ret = ''
+                    for (let it in data) {
+                        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                    }
+                    return ret
+                }],
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    // 'user_id': this.$store.state.user.userId,
+                    // 'session_id': this.$store.state.user.sessionId
+                }
+            }).then(res =>{
+                console.log(res);
+                if (res.data.status === '200') {
+                    this.$message({
+                        message: '删除成功',
+                        type: 'success'
+                    });
+                    this.getData()
+                }
+            })
+            this.dialogVisible = false
+        },
+        changePage: function () {
+            this.getData()
+        }
+    },
+    mounted(){
+        this.getData()
+    },
+    computed: {
+        ...mapState({
+            selectList: state=> state.selectList
+        })
+    },
+    watch: {
+        'selectList' :  'getData'
     }
 
 }
@@ -157,9 +222,15 @@ export default {
             font-size: 12px;
             vertical-align: top;
             cursor: pointer;
+            line-height: 25px;
             img{
                 vertical-align: top;
             }
         }
+    }
+    .block{
+        position: absolute;
+        bottom: -55px;
+        right: 0;
     }
 </style>

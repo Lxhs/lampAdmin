@@ -5,11 +5,13 @@
               <img src="../../assets/images/供电logo..png" alt="" width="40" height="40">
               <span>武汉路灯服务中心</span>
           </div>
-          <div class="tel">
-              刘国立
-              <icon name="tel" :w="18" :h="18"></icon>
-              热线电话：
-              0278888888
+          <div class="tel" @click="loginOut" style="cursor: pointer">
+              <!--刘国立-->
+              <icon name="personal" :w="18" :h="18" ></icon>
+              登出
+
+              <!--热线电话：-->
+              <!--0278888888-->
           </div>
       </div>
       <div class="navBar">
@@ -50,6 +52,44 @@ export default {
             let strs = []
             strs = str.split("/")
             this.path = strs[1]
+        },
+        loginOut: function () {
+            console.log(1);
+            this.axios({
+                method: 'post',
+                url: '/user/login/loginOut',
+                data: {
+                    userId: this.$store.state.user.userId
+                },
+                transformRequest: [function (data) {
+                    let ret = ''
+                    for (let it in data) {
+                        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                    }
+                    return ret
+                }],
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(res => {
+                console.log(res);
+                if (res.data.status === '200') {
+                    localStorage.removeItem('accessToken')
+
+                    this.$store.state.user = {}
+                    this.$message({
+                        message: '退出登录',
+                        type: 'success'
+                    });
+                    this.$router.push({
+                        path: 'home',
+                        name: 'home',
+                        params: {
+                            isShow: 3
+                        }
+                    })
+                }
+            })
         }
     },
     components: {
