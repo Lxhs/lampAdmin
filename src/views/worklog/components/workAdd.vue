@@ -633,11 +633,12 @@
         right: 30px;
         cursor: pointer;
     }
-    .add-de{
+    .add-de {
         position: relative;
-        width: 50px;
-        height: 50px;
+        width: 65px;
+        height: 4px;
         display: inline-block;
+        margin: -18px;
     }
     .otherZ{
         left: -55px !important;
@@ -664,9 +665,10 @@
             color: red ;
         }
     }
+
 </style>
 <style >
-    .el-input__inner{
-        float: left;
-    }
+    /*.el-input__inner{*/
+        /*float: left;*/
+    /*}*/
 </style>

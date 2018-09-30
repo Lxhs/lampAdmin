@@ -14,15 +14,15 @@
                        <span>计划</span>
                        <span>未完成</span>
                    </th>
-                   <th style="cursor: pointer" @click="getPush({path:'detail',name:'detail',params:{isShow: 1}})">未完成</th>
+                   <th>未完成</th>
                </tr>
                <tr>
-                   <td>97</td>
-                   <td>33</td>
-                   <td>19</td>
-                   <td>28</td>
-                   <td>5</td>
-                   <td>78</td>
+                   <td>{{dataList.yearPlanNumber}}</td>
+                   <td>{{dataList.firstHalfYearPlanNumber}}</td>
+                   <td>{{dataList.firstHalfYearUndone}}</td>
+                   <td>{{dataList.secondHalfPlanNumber}}</td>
+                   <td>{{dataList.secondHalfUndone}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'detail',name:'detail',params:{isShow: 1}})">{{dataList.undone}}</td>
                </tr>
            </table>
        </div>
@@ -35,17 +35,9 @@
                     上半年未完成工作
                 </div>
                 <table>
-                    <tr>
-                        <td>办公室</td>
-                        <td>配合办公室开展精准扶贫工作</td>
-                    </tr>
-                    <tr>
-                        <td>建设中心</td>
-                        <td>配合生技科，开展“三级引领”护安全主题党日活动</td>
-                    </tr>
-                    <tr>
-                        <td>建设中心</td>
-                        <td>完成公司“七一”评优评先各类上报工作</td>
+                    <tr v-for="(item,index) in dataList.firstHalfPages.list" :key="index">
+                        <td width="150px">{{item.name}}</td>
+                        <td style="cursor: pointer" @click="getDetail(item.id)">{{item.title}}</td>
                     </tr>
                 </table>
             </div>
@@ -55,17 +47,9 @@
                     下半年未完成工作
                 </div>
                 <table>
-                    <tr>
-                        <td>办公室</td>
-                        <td>配合办公室开展精准扶贫工作</td>
-                    </tr>
-                    <tr>
-                        <td>建设中心</td>
-                        <td>配合生技科，开展“三级引领”护安全主题党日活动</td>
-                    </tr>
-                    <tr>
-                        <td>建设中心</td>
-                        <td>完成公司“七一”评优评先各类上报工作</td>
+                    <tr v-for="(item,index) in dataList.secondHalfPages.list" :key="index">
+                        <td width="150px">{{item.name}}</td>
+                        <td style="cursor: pointer" @click="getDetail(item.id)">{{item.title}}</td>
                     </tr>
                 </table>
             </div>
@@ -77,6 +61,12 @@
 <script>
     export default {
         name: "index",
+        data() {
+            return {
+                dataList: ''
+            }
+        },
+
         methods: {
             getPush: function (val) {
                 this.$router.push({
@@ -88,7 +78,35 @@
                         dataObj: this.msg
                     }*/
                 })
+            },
+            getDetail: function (weekId) {
+                this.$router.push({
+                    path: 'detail',
+                    name: 'detailW',
+                    params: {
+                        isShow: 3,
+                        weekId,
+                    }
+                    /*query: {
+                        name: 'name',
+                        dataObj: this.msg
+                    }*/
+                })
             }
+        },
+        mounted() {
+            this.axios({
+                method: 'post',
+                url: '/ld/yearPlan/statistical',
+                params:{
+                    pageNo: 1,
+                    pageSize: 10,
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
+                }
+            }).then( res => {
+                this.dataList = res.data.data
+                console.log(res);
+            })
         }
 
     }

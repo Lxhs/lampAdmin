@@ -3,19 +3,19 @@
         <table>
             <tr>
                 <td>部门</td>
-                <td>办公室</td>
+                <td>{{dataList.name}}</td>
             </tr>
             <tr>
                 <td>标题</td>
-                <td>继续开展省级文明动态系统录入工作</td>
+                <td>{{dataList.title}}</td>
             </tr>
             <tr>
                 <td>时间</td>
-                <td>2018-8-10</td>
+                <td>{{dataList.planTime | formatDates}}</td>
             </tr>
             <tr>
                 <td>事件详情</td>
-                <td>继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明继续开展省级文明</td>
+                <td>{{dataList.eventDetails}}</td>
             </tr>
             <tr>
                 <td>批注</td>
@@ -30,7 +30,26 @@
 
 <script>
     export default {
-        name: "detail"
+        name: "detail",
+        data() {
+          return {
+              dataList: ''
+          }
+        },
+        mounted() {
+            this.axios({
+                method: 'post',
+                url: '/ld/weekPlan/getWeekPlan',
+                params:{
+                   id: this.$route.params.weekId,
+                   userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                }
+            }).then( res => {
+                console.log(res);
+                this.dataList = res.data.data
+                console.log(this.dataList);
+            })
+        }
     }
 </script>
 

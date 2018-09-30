@@ -14,36 +14,27 @@
                     <td>数量</td>
                 </tr>
                 <tr>
-                    <td>35</td>
-                    <td>5</td>
-                    <td>32</td>
-                    <td>12</td>
+                    <td>{{dataList.lastWeeksPlan}}</td>
+                    <td>{{dataList.lastWeeksUndone}}</td>
+                    <td>{{dataList.weeksPlan}}</td>
+                    <td>{{dataList.undone}}</td>
                 </tr>
             </table>
         </div>
         <div class="main-bottom">
-            <span>累计未完成工作计划</span>
+            <span>累计未完成工作</span>
             <table width="865px">
                 <thead>
                     <td>部门</td>
                     <td width="43%">内容</td>
                     <td width="43%">时间</td>
                 </thead>
-                <tr>
-                    <td>办公室</td>
-                    <td>配合办公室开展精准扶贫工作</td>
-                    <td>2018-7-15</td>
+                <tr v-for="(item,index) in dataList.pages.list" :key="index">
+                    <td>{{item.name}}</td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.planTime | formatDates}}</td>
                 </tr>
-                <tr>
-                    <td>建设中心</td>
-                    <td>配合生技科，开展"三级引领"护安全主题党日活动</td>
-                    <td>2018-7-15</td>
-                </tr>
-                <tr>
-                <td>建设中心</td>
-                <td>完成公司”七一“评优评先各类上报工作</td>
-                <td>2018-7-15</td>
-            </tr>
+
             </table>
         </div>
     </div>
@@ -52,6 +43,11 @@
 <script>
     export default {
         name: "index",
+        data () {
+            return{
+                dataList: ''
+            }
+        },
         methods: {
             getPush: function (val) {
                 this.$router.push({
@@ -64,6 +60,20 @@
                     }*/
                 })
             }
+        },
+        mounted() {
+            this.axios({
+                method: 'post',
+                url: '/ld/weekPlan/statistical',
+                params:{
+                    pageNo: 1,
+                    pageSize: 10,
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
+                }
+            }).then( res => {
+                console.log(res);
+                this.dataList = res.data.data
+            })
         }
     }
 </script>

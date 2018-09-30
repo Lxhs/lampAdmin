@@ -738,7 +738,7 @@ export default {
         width: 65px;
         height: 4px;
         display: inline-block;
-        margin: 0px;
+        margin: -18px;
     }
     #checkList{
         width: 66px;

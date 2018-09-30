@@ -6,10 +6,10 @@
                 <td width="40%" >工作内容</td>
                 <td width="40%">进度</td>
             </thead>
-            <tr>
-                <td>办公室</td>
-                <td style="cursor: pointer" @click="getPush">对上级行政文件，会议精神和行政办公会议定事项的监督检查</td>
-                <td>未完成</td>
+            <tr v-for="(item, index) in dataList.list" :key="index">
+                <td>{{item.name}}</td>
+                <td style="cursor: pointer" @click="getPush(item.id)">{{item.title}}</td>
+                <td>{{planStatus[item.planState - 1]}}</td>
             </tr>
             <tr>
                 <td>建设中心</td>
@@ -28,13 +28,20 @@
 <script>
     export default {
         name: "undoneW",
+        data() {
+            return{
+                dataList: '',
+                planStatus: ['未完成','阶段性完成','已完成']
+            }
+        },
         methods: {
-            getPush: function (val) {
+            getPush: function (weekId) {
                 this.$router.push({
                     path: 'detail',
                     name: 'detailW',
                     params: {
                         isShow: 3,
+                        weekId,
                     }
                     /*query: {
                         name: 'name',
@@ -42,6 +49,21 @@
                     }*/
                 })
             }
+        },
+        mounted() {
+            this.axios({
+                method: 'post',
+                url: '/ld/weekPlan/undoneList',
+                params:{
+                    pageNo: 1,
+                    pageSize: 10,
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    queryCondition: 3
+                }
+            }).then( res => {
+                console.log(res);
+                this.dataList = res.data.data
+            })
         }
     }
 </script>

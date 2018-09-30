@@ -7,29 +7,11 @@
                 <th>工作进度</th>
                 <th>责任部门</th>
             </tr>
-            <tr>
-                <td>完成月度EPP人员异动</td>
-                <td class="isOverdue">上半年（已超期）</td>
-                <td>未完成</td>
-                <td>办公室</td>
-            </tr>
-            <tr>
-                <td>完成月度EPP人员异动</td>
-                <td>上半年（已超期）</td>
-                <td>未完成</td>
-                <td>办公室</td>
-            </tr>
-            <tr>
-                <td>完成月度EPP人员异动</td>
-                <td>上半年（已超期）</td>
-                <td>未完成</td>
-                <td>办公室</td>
-            </tr>
-            <tr>
-                <td>完成月度EPP人员异动</td>
-                <td>上半年（已超期）</td>
-                <td>未完成</td>
-                <td>办公室</td>
+            <tr v-for="(item, index) in dataList.list" :key="index">
+                <td>{{item.title}}</td>
+                <td class="isOverdue">{{item.planTime | formatDates}}</td>
+                <td>{{item.planState === 1 ? '已完成' : '未完成'}}</td>
+                <td>{{item.name}}</td>
             </tr>
         </table>
     </div>
@@ -38,8 +20,25 @@
 <script>
     export default {
         name: "detail",
-        mounted () {
-            console.log(this.$route.path)
+        data() {
+          return {
+              dataList: ''
+          }
+        },
+        mounted() {
+            this.axios({
+                method: 'post',
+                url: '/ld/yearPlan/undoneList',
+                params:{
+                    pageNo: 1,
+                    pageSize: 10,
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    queryConditions : 3
+                }
+            }).then( res => {
+                this.dataList = res.data.data
+                console.log(res);
+            })
         }
     }
 </script>
