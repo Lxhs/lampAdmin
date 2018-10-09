@@ -2,8 +2,8 @@
     <div class="main">
         <ul>
             <li v-for="(item,index) in progress" :key="index" @click="getPush({path:'detail',name:'detailP',params:{isShow: 1}})">
-                <h4>{{item.name}}</h4>
-                <span>{{item.num}}</span>
+                <h4>{{item.progressName}}</h4>
+                <span>{{item.count}}</span>
             </li>
         </ul>
     </div>
@@ -44,6 +44,15 @@
                     }*/
                 })
             }
+        },
+        mounted() {
+            this.axios({
+                url: '/ld/project/statistical',
+                method: 'post',
+            }).then( res => {
+                console.log(res);
+                this.progress = res.data.data
+            })
         }
     }
 </script>

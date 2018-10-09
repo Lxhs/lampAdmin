@@ -10,72 +10,20 @@
                 <td>时间</td>
                 <td>备注</td>
             </thead>
-            <tr>
-                <td>1</td>
-                <td>2016-计改-22至27</td>
-                <td @click="openOp(true)" style="cursor: pointer;">2016年道路老旧照明设施达标升级改造工程1标段工程</td>
+            <tr v-for="(item, index) in dataList.list" :key="index">
+                <td>{{index + 1}}</td>
+                <td>{{item.projectNo}}</td>
+                <td @click="openOp(true,item.id)" style="cursor: pointer;">{{item.projectName}}</td>
                 <td>是</td>
                 <td>
                     <div id="gridList">
-                        <el-tooltip class="item complete" id="tip" effect="dark" content="Top Center 提示文字" placement="top" v-for="index in 15" :key="index">
+                        <el-tooltip class="item " :class="items.state === 1 ? 'complete' : ''" id="tip" effect="dark" :content="items.progressName" placement="top" v-for="(items,index) in item.progressList" :key="index">
                             <span>1</span>
                         </el-tooltip>
                     </div>
                 </td>
-                <td>2016-8-5</td>
-                <td>备注</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>2016-计改-22至27</td>
-                <td>2016年道路老旧照明设施达标升级改造工程1标段工程</td>
-                <td>是</td>
-                <td>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>时间</td>
-                <td>备注</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>2016-计改-22至27</td>
-                <td  >2016年道路老旧照明设施达标升级改造工程1标段工程</td>
-                <td>是</td>
-                <td>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>时间</td>
-                <td>备注</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>2016-计改-22至27</td>
-                <td>2016年道路老旧照明设施达标升级改造工程1标段工程</td>
-                <td>是</td>
-                <td>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>时间</td>
-                <td>备注</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>2016-计改-22至27</td>
-                <td>2016年道路老旧照明设施达标升级改造工程1标段工程</td>
-                <td>是</td>
-                <td>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>时间</td>
-                <td>备注</td>
+                <td>{{ item.projectTime | formatDates}}</td>
+                <td>{{item.remarks}}</td>
             </tr>
         </table>
         <div class="popups" v-show="isShowO">
@@ -86,7 +34,7 @@
                 <table class="dMain">
                     <tr>
                         <td>工程名称</td>
-                        <td>2016年道路老旧照明设施达标升级改造工程1标段工程</td>
+                        <td>{{projectDetail.projectName}}</td>
                     </tr>
                     <tr>
                         <td>中期验收</td>
@@ -98,7 +46,7 @@
                     </tr>
                     <tr>
                         <td>时间</td>
-                        <td>2018-8-19</td>
+                        <td>{{ projectDetail.projectTime | formatDates}}</td>
                     </tr>
                     <tr>
                         <td>备注</td>
@@ -122,7 +70,7 @@
                     </tr>
 
                 </table>
-                <el-button type="primary" id="dBtn">主要按钮</el-button>
+                <el-button type="primary" id="dBtn">保存</el-button>
             </div>
         </div>
     </div>
@@ -134,13 +82,57 @@
         data() {
             return {
                 isShowO: false,
-                textarea: ''
+                textarea: '',
+                dataList: '',
+                projectDetail: ''
             }
         },
         methods: {
-            openOp: function (v) {
+            openOp: function (v,id) {
+                console.log(id);
                 this.isShowO = v
+                if (id !== ''){
+                    this.getProjectDetail(id)
+                }
+            },
+            getProjectDetail: function (id) {
+                this.axios({
+                    url: '/ld/project/getProject',
+                    method: 'post',
+                    params: {
+                        id: id || 1,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id
+                    }
+                }).then( res => {
+                    console.log(res);
+                    this.projectDetail = res.data.data
+                })
+
             }
+        },
+        mounted() {
+            this.axios({
+                url: '/ld/project/getProjectList',
+                method: 'post',
+                data: {
+                    pageNo: 1,
+                    pageSize: 5,
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
+                },
+                transformRequest: [function (data) {
+                    let ret = ''
+                    for (let it in data) {
+                        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                    }
+                    return ret
+                }],
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then( res => {
+                console.log(res);
+                this.dataList = res.data.data
+            })
         }
     }
 </script>

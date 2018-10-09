@@ -82,8 +82,8 @@ export default {
                         type: 'success'
                     });
                     this.$router.push({
-                        path: 'home',
-                        name: 'home',
+                        path: '/login',
+                        // name: 'login',
                         params: {
                             isShow: 3
                         }

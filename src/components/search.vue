@@ -31,6 +31,7 @@
                     this.title = this.$route.params.title
                 }
                 sessionStorage.setItem('isShow', JSON.stringify(this.isShow));
+                sessionStorage.setItem('title', JSON.stringify(this.title))
 
             },
             selectList: function (v) {
@@ -46,6 +47,11 @@
               this.isShow = JSON.parse(sessionStorage.getItem('isShow'));
               console.log(this.isShow);
           }
+            if (!this.$route.params.title){
+                console.log(1111);
+                this.title = JSON.parse(sessionStorage.getItem('title'));
+                console.log(this.isShow);
+            }
         },
         watch: {
             // 监听路由变化，随时获取新的列表信息

@@ -2,18 +2,53 @@
  <div class="main">
      <table>
          <tr>
-             <th>日期</th>
-             <th>标题</th>
-             <th>内容</th>
-             <th>状态</th>
+             <th style="width: 150px;">
+                 <el-date-picker
+                         v-model="recordTime"
+                         type="date"
+                         placeholder="选择日期"
+                         style="width: 120px; font-size: 12px"
+                         value-format="yyyy-MM-dd HH:mm:ss"
+                 class="selectTime">
+                 </el-date-picker>
+             </th>
+             <th>
+                 <el-dropdown size="medium" trigger="click" placement="bottom">
+                      <span class="el-dropdown-link" style="cursor: pointer">
+                        标题<i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                     <el-dropdown-menu slot="dropdown">
+                         <el-dropdown-item v-for="(item,index) in titleStates" :key="index" @click.native="changeTitleCss(index)">{{item}}</el-dropdown-item>
+                     </el-dropdown-menu>
+                 </el-dropdown>
+             </th>
+             <th>内容标记颜色</th>
+             <th>
+                 <el-dropdown size="medium" trigger="click" placement="bottom">
+                      <span class="el-dropdown-link" style="cursor: pointer">
+                        状态<i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                     <el-dropdown-menu slot="dropdown">
+                         <el-dropdown-item v-for="(item,index) in workSatesList" :key="index" @click.native="changeWorkState(index)">{{item}}</el-dropdown-item>
+                     </el-dropdown-menu>
+                 </el-dropdown>
+             </th>
              <th>责任人</th>
              <th>操作</th>
          </tr>
          <tr v-for="(item,index) in dataList.list" :key="index">
              <td>{{ item.recordTime | formatDates}}</td>
-             <td style="cursor: pointer;max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; " @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
-             <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{item.contentDesc}}</td>
-             <td>{{workSate[item.workState - 1]}}</td>
+             <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; width: 340px;" :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+             <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                 <ul class="labelCol">
+                     <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
+                         v-show="item.contentColors.indexOf(color)  !== -1 "></li>
+                     <!--<li style="background-color: #00AEEF;"></li>-->
+                     <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
+                     <!--<li style="background-color: #ED1C24;"></li>-->
+                 </ul>
+             </td>
+             <td>{{workSates[item.workState - 1]}}</td>
              <td>{{item.bookResponsibleNames[0]}}</td>
              <td >
                  <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
@@ -57,12 +92,18 @@ export default {
       return {
           dialogVisible: false,
           dataList: {},
-          workSate:['完成','未完成','阶段性完成'],
+          workState: '',
+          workSates:['完成','阶段性完成','未完成'],
+          workSatesList:['所有','完成','阶段性完成','未完成'],
           detailContent: '',
           workBookIds:'',
           currentPage: 1,
           pageSize: 5,
           total: 0,
+          titleStates:['所有','标注'],
+          labelColor: ['#ED1C24','#F2ED84','#00AEEF','#8CC63F'],
+          titleCss: '',
+          recordTime: ''
       }
     },
     methods: {
@@ -92,7 +133,10 @@ export default {
                     userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
                     pageNo: this.currentPage,
                     pageSize: this.pageSize,
-                    keyWord: this.selectList
+                    keyWord: this.selectList,
+                    workState: this.workState,
+                    titleCss: this.titleCss,
+                    recordTime: this.recordTime
                 }
             }).then(res => {
                 console.log(res);
@@ -144,7 +188,28 @@ export default {
         },
         changePage: function () {
             this.getData()
-        }
+        },
+        changeWorkState: function (index) {
+            if (index === 0){
+                this.workState = ''
+            } else {
+                this.workState = index
+
+            }
+            this.currentPage = 1
+            this.getData()
+        },
+        changeTitleCss: function (index) {
+            if (index === 1){
+                console.log(111);
+                this.titleCss = 'red'
+            } if (index === 0){
+                console.log(222);
+                this.titleCss = ''
+            }
+            this.currentPage = 1
+            this.getData()
+        },
     },
     mounted(){
         this.getData()
@@ -155,7 +220,8 @@ export default {
         })
     },
     watch: {
-        'selectList' :  'getData'
+        'selectList' :  'getData',
+        'recordTime' : 'getData'
     }
 
 }
@@ -232,5 +298,34 @@ export default {
         position: absolute;
         bottom: -55px;
         right: 0;
+    }
+    .labelCol{
+        padding: 5px 10px;
+        display: inline-block;
+        margin-left: 10px;
+        li{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+            margin-right: 3px;
+            &:last-child{
+                margin: 0;
+            }
+        }
+    }
+    .is-activeC{
+        border: 3px solid #58585A !important;
+    }
+    .is-marker{
+        color: red
+    }
+   .selectTime >.el-input__inner{
+        padding-right: 0 ;
+    }
+</style>
+<style lang="scss">
+    .selectTime >.el-input__inner{
+        padding-right: 10px ;
     }
 </style>

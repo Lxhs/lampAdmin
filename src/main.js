@@ -10,6 +10,16 @@ import ElementUI from 'element-ui';
 import axios from 'axios'
 import qs from 'qs'
 import vfilters from  './filter/filter'
+// import zh from 'vee-validate/dist/locale/zh_CN';
+//
+// Validator.addLocale(zh);
+//
+// const config = {
+//     locale: 'zh_CN'
+// };
+//
+// Vue.use(VeeValidate,config);
+
 
 
 // for (let key in vfilters){
@@ -19,7 +29,7 @@ import vfilters from  './filter/filter'
 Object.keys(vfilters).forEach(key => Vue.filter(key, vfilters[key]));
 
 axios.defaults.baseURL='http://101.132.141.115:9095/ldview-interface/f'
-
+// axios.defaults.baseURL='http://192.168.4.109:9095/ldview-interface/f'
 
 
 // axios.interceptors.request.use(

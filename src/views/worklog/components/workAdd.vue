@@ -26,8 +26,8 @@
                 </el-date-picker>
             </li>
             <li>
-                <div style="float: left; margin: 10px 10px; color: #474747">标题</div>
-                <el-input  placeholder="请输入内容" style="width: 400px; height: 40px;" v-model="title"></el-input>
+                <div style="float: left; margin: 10px 10px; color: #474747; cursor: pointer" @click="changeTitleCol">标题</div>
+                <el-input  placeholder="请输入内容" style="width: 400px; height: 40px; " v-model="title"  :class="titleCol === '' ? '' : 'titleCol'" ></el-input>
             </li>
             <li>
                 <el-select v-model="value" placeholder="请选择" value="1" style="width: 140px;margin-left: 20px">
@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="work-main">
-            <div class="main-left">
+            <div class="main-left" @click="changeColor(3)" :style="{backgroundColor : bookContent2.contentCss}">
                 <el-input
                         type="textarea"
                         :autosize="{ minRows: 2, maxRows: 10}"
@@ -154,7 +154,7 @@
         </div>
         <div class="btmAction">
             <el-button type="info" plain class="saveBtn" style="background-color: #ccc; color: #474747;" @click="goBack" >返回</el-button>
-            <el-button type="info" plain class="saveBtn" @click="dialogVisible = true" >保存</el-button>
+            <el-button type="info" plain class="saveBtn" @click="judgeVaule" >保存</el-button>
         </div>
         <el-dialog
                 title="提示"
@@ -180,10 +180,10 @@
                     label: '完成'
                 }, {
                     value: 2,
-                    label: '未完成'
+                    label: '阶段性完成'
                 }, {
                     value: 3,
-                    label: '阶段性完成'
+                    label: '未完成'
                 }],
                 value: 1,
                 checkAll: false,
@@ -239,7 +239,8 @@
                 contentColorB: [],   // 2模块的批注颜色集合
                 contentColorC: [],   // 3模块的批注颜色集合
                 otherResponsiblePersons: [''],
-                responsiblePersonId:[]
+                responsiblePersonId:[],
+                titleCol: ''
             }
         },
         methods: {
@@ -336,35 +337,22 @@
                     this.bookContent2.bookContents[index].contentCss = this.currentLabelColor
                 } else if (v === 2){
                     this.bookContent2.bookContents[index].bookContents[indexS].contentCss = this.currentLabelColor
+                } else if (v === 3){
+                    this.bookContent2.contentCss = this.currentLabelColor
                 }
 
             },
+            changeTitleCol:function () {
+                if (this.titleCol){
+                    this.titleCol = ''
+                } else {
+                    this.titleCol = 'red'
+                }
+            },
             addWorkBook: function () {
 
-                // for (let i = 0; i< this.bookContent2.bookContents.length; i++){
-                //     if (i === 0){
-                //         this.bookContent2.bookContents[i].bookContents = this.bookContent2a.bookContents
-                //     } else if (i === 1) {
-                //         this.bookContent2.bookContents[i].bookContents = this.bookContent2b.bookContents
-                //     }else if (i === 2){
-                //         this.bookContent2.bookContents[i].bookContents = this.bookContent2c.bookContents
-                //     }
-                // }
-
-                this.dialogVisible = false
                 this.bookContent2.contentDesc = this.bookContent
-                // for (let i = 0; i < this.bookContent2.bookContents.length; i++) {
-                //     // this.bookContent2.bookContents[i].contentDesc = this.inputValue[i]
-                //     // for (let j = 0; j <this.bookContent2.bookContents[i].bookContents.length; j++) {
-                //     //     if (i === 0){
-                //     //         this.bookContent2.bookContents[i].bookContents[j].contentDesc = this.inputValueA[j]
-                //     //     } else if (i=== 1) {
-                //     //         this.bookContent2.bookContents[i].bookContents[j].contentDesc = this.inputValueB[j]
-                //     //     } else if (i === 2) {
-                //     //         this.bookContent2.bookContents[i].bookContents[j].contentDesc = this.inputValueC[j]
-                //     //     }
-                //     // }
-                // }
+
                 for (let i =0; i < this.checkedCities.length; i++ ){
                     for (let j = 0; j < this.cities.length; j++){
                         if (this.checkedCities[i] === this.cities[j].name){
@@ -380,11 +368,12 @@
                     responsiblePersonId: this.responsiblePersonId,
                     otherResponsiblePerson: this.otherResponsiblePersons,
                     userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    titleCss: this.titleCol,
                     bookContent: this.bookContent2
                     // id: this.$route.params.data.id,
-
                 }
                 console.log(this.dataList);
+                this.dialogVisible = false
                 this.axios({
                     method: 'post',
                     url: '/ld/workBook/addWorkBook',
@@ -408,7 +397,18 @@
 
                 })
 
+
+
+
             },
+            judgeVaule: function () {
+                if (!this.title || !this.bookContent){
+                    console.log(1112131312);
+                    this.$message.error('标题或内容不能为空');
+                } else {
+                    this.dialogVisible = true
+                }
+            }
 
 
         },
@@ -516,7 +516,7 @@
             .main-left{
                 overflow: hidden;
                 border-radius: 3px;
-                padding: 0 20px 20px;
+                padding: 10px 20px ;
                 float: left;
                 position: relative;
             }
@@ -667,8 +667,13 @@
     }
 
 </style>
-<style >
+<style lang="scss" >
     /*.el-input__inner{*/
         /*float: left;*/
     /*}*/
+
+    .titleCol > .el-input__inner{
+        background-color: red;
+        color: #fff;
+    }
 </style>

@@ -26,8 +26,8 @@
                 </el-date-picker>
             </li>
             <li>
-                <div style="float: left; margin: 10px 10px; color: #474747">标题</div>
-                <el-input  placeholder="请输入内容" style="width: 400px; height: 40px;" v-model="title"></el-input>
+                <div style="float: left; margin: 10px 10px; color: #474747;cursor: pointer" @click="changeTitleCol">标题</div>
+                <el-input  placeholder="请输入内容" style="width: 400px; height: 40px;" v-model="title" :class="titleCol === '' ? '' : 'titleCol'"></el-input>
             </li>
             <li>
                 <el-select v-model="value" placeholder="请选择" value="1" style="width: 140px;margin-left: 20px">
@@ -55,13 +55,14 @@
             </div>
         </div>
         <div class="work-main">
-            <div class="main-left">
+            <div class="main-left" @click="changeColor(3)" :style="{backgroundColor : contentCss}">
                 <el-input
                         type="textarea"
                         :autosize="{ minRows: 2, maxRows: 10}"
                         placeholder="请输入内容"
                         v-model="bookContent"
                         id="textL"
+                        class="textarea"
                         >
                 </el-input>
                 <icon name="添加" :w="12" :h="12" class=" ii2" @click.native="add1" :plain="true"></icon>
@@ -78,6 +79,7 @@
                                 placeholder="请输入内容"
                                 v-model="item.contentDesc"
                                 id="textM"
+                                class="textarea"
                                >
                         </el-input>
                     </li>
@@ -168,10 +170,10 @@ export default {
                 label: '完成'
             }, {
                 value: 2,
-                label: '未完成'
+                label: '阶段性完成'
             }, {
                 value: 3,
-                label: '阶段性完成'
+                label: '未完成'
             }],
             value: 1,
             checkAll: false,
@@ -202,6 +204,8 @@ export default {
             contentColorC: [],   // 3模块的批注颜色集合
             otherResponsiblePersons: [''],
             responsiblePersonId:[],
+            contentCss: '',
+            titleCol: ''
         }
     },
     methods: {
@@ -324,8 +328,17 @@ export default {
                 this.bookContent2[index].contentCss = this.currentLabelColor
             } else if (v === 2){
                 this.bookContent2[index].bookContents[indexS].contentCss = this.currentLabelColor
+            } else if( v === 3) {
+                this.contentCss = this.currentLabelColor
             }
 
+        },
+        changeTitleCol:function () {
+            if (this.titleCol){
+                this.titleCol = ''
+            } else {
+                this.titleCol = 'red'
+            }
         },
         getWorkBook: function() {
             // this.axios.post('/ld/workBook/getWorkBook',{
@@ -377,6 +390,8 @@ export default {
                 this.time = this.dataList.recordTime
                 this.title = this.dataList.title
                 this.value = this.dataList.workState
+                this.titleCol = this.dataList.titleCss
+                this.contentCss = this.dataList.bookContent.contentCss
                 this.bookContent = this.dataList.bookContent.contentDesc
                 this.bookContent2 = this.dataList.bookContent.bookContents || ''
                 console.log(this.dataList.bookContent.bookContents);
@@ -427,6 +442,8 @@ export default {
 
         },
         updateWorkBook: function () {
+
+
             this.dialogVisible = false
             for (let i =0; i < this.checkedCities.length; i++ ){
                 for (let j = 0; j < this.cities.length; j++){
@@ -440,19 +457,21 @@ export default {
                 recordTime: Date.parse(new Date()),
                 title: this.title,
                 workState: this.value,
+                titleCss: this.titleCol,
                 responsiblePersonId: this.responsiblePersonId,
                 otherResponsiblePerson: this.otherResponsiblePersons,
                 userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
                 bookContent: {
                     contentDesc: this.bookContent,
                     contentNo: '0',
-                    contentCss: '',
+                    contentCss: this.contentCss,
                     parentNo: null,
                     bookContents: this.bookContent2,
                 },
                 id: this.$route.params.data.id,
             }
             console.log(this.dataList);
+
             // this.axios({
             //     method: 'post',
             //     url: '/ld/workBook/updateWorkBook',
@@ -598,7 +617,7 @@ export default {
             .main-left{
                 overflow: hidden;
                 border-radius: 3px;
-                padding: 0 20px 20px;
+                padding: 10px 20px ;
                 float: left;
                 position: relative;
             }
@@ -743,9 +762,16 @@ export default {
     #checkList{
         width: 66px;
     }
+    .textarea >>> .el-textarea__inner{
+        font-size:18px !important;
+    }
 </style>
 <style lang="scss">
     .el-checkbox{
         width: 66px;
+    }
+    .titleCol > .el-input__inner{
+        background-color: red;
+        color: #fff;
     }
 </style>
