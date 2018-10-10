@@ -26,6 +26,8 @@
         methods: {
             //
             fetchData () {
+                this.$store.state.selectList = ''
+                this.select = ''
                 this.isShow = this.$route.params.isShow
                 if (this.$route.params.title) {
                     this.title = this.$route.params.title

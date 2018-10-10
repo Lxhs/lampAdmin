@@ -353,7 +353,7 @@ export default {
                 method: 'post',
                 url: '/ld/workBook/getWorkBook',
                 data: {
-                    workBookId:this.$route.params.data.id,
+                    workBookId:JSON.parse(sessionStorage.getItem('workLogId')).id,
                     userId: JSON.parse(localStorage.getItem('accessToken')).user_id
                 },
                 transformRequest: [function (data) {

@@ -23,7 +23,7 @@
                   <router-link :to="{ name: 'weekly', params: { isShow: 2, title: '每周完成工作情况'}}" :class="path === 'weekly' ? 'is-active' : ''">每周计划</router-link>
               </li>
               <li>
-                  <router-link :to="{ name: 'progress', params: { isShow: 1 }}" :class="path === 'progress' ? 'is-active' : ''">工程进度</router-link>
+                  <router-link :to="{ name: 'progress', params: { isShow: 2,title: '工程进度' }}" :class="path === 'progress' ? 'is-active' : ''">工程进度</router-link>
               </li>
               <li>
                   <router-link :to="{ name: 'waterLog', params: { isShow: 2, title: '渍水情况'}}" :class="path === 'waterLog' ? 'is-active' : ''">渍水情况</router-link>

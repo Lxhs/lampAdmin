@@ -51,11 +51,17 @@ const router =  new Router({
                 component: () => import('./views/yearly/index'),
             },
             {
-            path: 'detail',
-            name: 'detail',
+            path: 'undone',
+            name: 'undone',
             meta:{requireAuth:true},
-            component: () => import('./views/yearly/components/detail')
-        }]
+            component: () => import('./views/yearly/components/undone')
+        },{
+                path: 'detailY',
+                name: 'detailY',
+                meta:{requireAuth:true},
+                component: () => import('./views/yearly/components/detailY')
+            }
+        ]
     },
     {
       path: "/weekly",

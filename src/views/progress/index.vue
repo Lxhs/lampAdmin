@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <ul>
-            <li v-for="(item,index) in progress" :key="index" @click="getPush({path:'detail',name:'detailP',params:{isShow: 1}})">
+            <li v-for="(item,index) in progress" :key="index" @click="getPush({path:'detail',name:'detailP',params:{isShow: 1,projectProgress: item.id}},item.count)">
                 <h4>{{item.progressName}}</h4>
                 <span>{{item.count}}</span>
             </li>
@@ -33,16 +33,25 @@
             }
         },
         methods: {
-            getPush: function (val) {
-                this.$router.push({
-                    path: val.path,
-                    name: val.name,
-                    params: val.params
-                    /*query: {
-                        name: 'name',
-                        dataObj: this.msg
-                    }*/
-                })
+            getPush: function (val,num) {
+                if (num === 0){
+                    this.$message({
+                        message: '暂无数据',
+                        type: 'warning'
+                    });
+                } else {
+                    sessionStorage.setItem('projectProgress',JSON.stringify(val.params.projectProgress))
+                    this.$router.push({
+                        path: val.path,
+                        name: val.name,
+                        params: val.params
+                        /*query: {
+                            name: 'name',
+                            dataObj: this.msg
+                        }*/
+                    })
+                }
+
             }
         },
         mounted() {
@@ -53,7 +62,8 @@
                 console.log(res);
                 this.progress = res.data.data
             })
-        }
+        },
+
     }
 </script>
 

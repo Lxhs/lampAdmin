@@ -22,7 +22,7 @@
                    <td>{{dataList.firstHalfYearUndone}}</td>
                    <td>{{dataList.secondHalfPlanNumber}}</td>
                    <td>{{dataList.secondHalfUndone}}</td>
-                   <td style="cursor: pointer" @click="getPush({path:'detail',name:'detail',params:{isShow: 1}})">{{dataList.undone}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1}})">{{dataList.undone}}</td>
                </tr>
            </table>
        </div>
@@ -79,13 +79,13 @@
                     }*/
                 })
             },
-            getDetail: function (weekId) {
+            getDetail: function (yearId) {
                 this.$router.push({
-                    path: 'detail',
-                    name: 'detailW',
+                    path: 'detailY',
+                    name: 'detailY',
                     params: {
                         isShow: 3,
-                        weekId,
+                        yearId,
                     }
                     /*query: {
                         name: 'name',

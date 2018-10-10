@@ -4,17 +4,17 @@
             <thead>
                 <td>序号</td>
                 <td>编号</td>
-                <td>工程名称</td>
+                <td >工程名称</td>
                 <td>超时</td>
-                <td>状态</td>
-                <td>时间</td>
-                <td>备注</td>
+                <td style="width: 220px;">状态</td>
+                <td style="width: 135px;">时间</td>
+                <td style="width: 95px;">备注</td>
             </thead>
             <tr v-for="(item, index) in dataList.list" :key="index">
                 <td>{{index + 1}}</td>
                 <td>{{item.projectNo}}</td>
-                <td @click="openOp(true,item.id)" style="cursor: pointer;">{{item.projectName}}</td>
-                <td>是</td>
+                <td @click="openOp(true,item.id)" style="max-width: 200px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; cursor: pointer;width: 300px">{{item.projectName}}</td>
+                <td>{{item.projectState === 0 ? '否': '是'}}</td>
                 <td>
                     <div id="gridList">
                         <el-tooltip class="item " :class="items.state === 1 ? 'complete' : ''" id="tip" effect="dark" :content="items.progressName" placement="top" v-for="(items,index) in item.progressList" :key="index">
@@ -23,60 +23,94 @@
                     </div>
                 </td>
                 <td>{{ item.projectTime | formatDates}}</td>
-                <td>{{item.remarks}}</td>
+                <td style="cursor: pointer;" @click="openOp(true,item.id)">详情</td>
             </tr>
         </table>
+        <el-button type="info" plain class="goBack" @click="goBack">返回</el-button>
         <div class="popups" v-show="isShowO">
             <div class="detail">
                 <div class="dTop" >
                     <icon name="cancel" width="24" id="cancel" @click.native="openOp(false)"></icon>
                 </div>
-                <table class="dMain">
-                    <tr>
-                        <td>工程名称</td>
-                        <td>{{projectDetail.projectName}}</td>
-                    </tr>
-                    <tr>
-                        <td>中期验收</td>
-                        <td>未超时</td>
-                    </tr>
-                    <tr>
-                        <td>编号</td>
-                        <td>2016-计改-22至27</td>
-                    </tr>
-                    <tr>
-                        <td>时间</td>
-                        <td>{{ projectDetail.projectTime | formatDates}}</td>
-                    </tr>
-                    <tr>
-                        <td>备注</td>
-                        <td>
-                            稽查队在神龙大道稽查队在神龙大道稽查队在神龙大道稽查队在神龙大道稽查队
-                            在神龙大道稽查队在神龙大道稽查队在神龙大道稽查队在神龙大道稽查队在神大
-                            道稽查队在神龙大道稽查队在神龙大道稽查队在神龙大道
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>批注</td>
-                        <td>
-                            <el-input
-                                    type="textarea"
-                                    :rows="4"
-                                    placeholder="请输入内容"
-                                    v-model="textarea"
-                                    class="postil">
-                            </el-input>
-                        </td>
-                    </tr>
+                <div class="detailList" style="overflow:auto;display:block;height: 530px;">
+                    <table class="dMain" >
+                        <tr>
+                            <td>工程名称</td>
+                            <td>{{projectDetail.projectName}}</td>
+                        </tr>
+                        <tr style="border-collapse: separate;border-spacing:125px 15px;">
+                            <td>{{projectDetail.projectProgressName}}</td>
+                            <td>{{projectDetail.projectState  === 0 ? '未超时' : '已超时'}}</td>
+                        </tr>
+                        <tr>
+                            <td>编号</td>
+                            <td>{{projectDetail.projectNo}}</td>
+                        </tr>
+                        <tr>
+                            <td>时间</td>
+                            <td>{{ projectDetail.projectTime | formatDates}}</td>
+                        </tr>
+                        <tr>
+                            <td>备注</td>
+                            <td>
+                                {{projectDetail.remarks | isEmptyStr}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>批注</td>
+                            <td>
+                                <div class="note" v-for="(item,index) in projectDetail.projectNotes" :key="index">
+                                    <span class="detailTime">
+                                        {{item.notesTime}}
+                                    </span>
+                                    <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
+                                    <el-input
+                                            type="textarea"
+                                            :rows="4"
+                                            placeholder="请输入内容"
+                                            v-model="item.detail"
+                                            class="postil">
+                                    </el-input>
+                                </div>
+                                <div class="note">
+                                    <span class="detailTime" style="background-color: #67C23A;">
+                                        新增
+                                    </span>
+                                    <el-input
+                                            type="textarea"
+                                            :rows="4"
+                                            placeholder="请输入内容"
+                                            v-model="newDetail.detail"
+                                            class="postil">
+                                    </el-input>
+                                </div>
+                            </td>
+                        </tr>
 
-                </table>
-                <el-button type="primary" id="dBtn">保存</el-button>
+                    </table>
+
+                </div>
+                <el-button type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
+
+
             </div>
         </div>
+        <el-dialog
+                title="提示"
+                :visible.sync="dialogVisible"
+                width="30%"
+        >
+            <span>确认要保存吗？</span>
+            <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="addNotes">确 定</el-button>
+                    </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+    import {mapState} from "vuex";
     export default {
         name: "detail",
         data() {
@@ -84,7 +118,12 @@
                 isShowO: false,
                 textarea: '',
                 dataList: '',
-                projectDetail: ''
+                projectDetail: '',
+                newDetail: {
+                    detail: ''
+                },
+                dialogVisible: false,
+                updataDetail: ''
             }
         },
         methods: {
@@ -92,6 +131,7 @@
                 console.log(id);
                 this.isShowO = v
                 if (id !== ''){
+                    sessionStorage.setItem('projectDetailId',id)
                     this.getProjectDetail(id)
                 }
             },
@@ -100,7 +140,7 @@
                     url: '/ld/project/getProject',
                     method: 'post',
                     params: {
-                        id: id || 1,
+                        id:sessionStorage.getItem('projectDetailId') ,
                         userId: JSON.parse(localStorage.getItem('accessToken')).user_id
                     }
                 }).then( res => {
@@ -108,31 +148,77 @@
                     this.projectDetail = res.data.data
                 })
 
+            },
+            addNotes: function () {
+                this.dialogVisible = false
+                this.updataDetail = this.projectDetail
+                if (this.newDetail.detail !== ''){
+                    this.updataDetail.projectNotes.push(this.newDetail)
+                }
+                this.axios({
+                    url: '/ld/project/updateProject',
+                    method: 'post',
+                    data: this.updataDetail
+                }).then( res => {
+                    console.log(res);
+                    this.isShowO = false
+                    this.newDetail.detail = ''
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                    });
+                    this.getProjectList()
+                })
+            },
+            deleteNotes: function(index) {
+                this.projectDetail.projectNotes.splice(index,1)
+            },
+            getProjectList: function () {
+                this.axios({
+                    url: '/ld/project/getProjectList',
+                    method: 'post',
+                    data: {
+                        pageNo: 1,
+                        pageSize: 5,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                        projectProgress: JSON.parse(sessionStorage.getItem('projectProgress')),
+                        projectName: this.selectList
+                    },
+                    transformRequest: [function (data) {
+                        let ret = ''
+                        for (let it in data) {
+                            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                        }
+                        return ret
+                    }],
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then( res => {
+                    console.log(res);
+                    this.dataList = res.data.data
+                })
+            },
+            goBack: function () {
+                this.$router.push({
+                    path: 'index',
+                    name: 'progress',
+                    params: {
+                        isShow: 1
+                    }
+                })
             }
         },
         mounted() {
-            this.axios({
-                url: '/ld/project/getProjectList',
-                method: 'post',
-                data: {
-                    pageNo: 1,
-                    pageSize: 5,
-                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
-                },
-                transformRequest: [function (data) {
-                    let ret = ''
-                    for (let it in data) {
-                        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-                    }
-                    return ret
-                }],
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            }).then( res => {
-                console.log(res);
-                this.dataList = res.data.data
+          this.getProjectList()
+        },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
             })
+        },
+        watch: {
+            'selectList' :  'getProjectList',
         }
     }
 </script>
@@ -141,7 +227,6 @@
     .main{
         width: 1000px;
         margin: 20px auto;
-        overflow: hidden;
         position: relative;
         &>table{
             width: 960px;
@@ -233,8 +318,8 @@
                         }
                         &:nth-child(2){
                             position: absolute;
-                            right: -300px;
-                            top: 0;
+                            right: -450px;
+                            top: 15px;
                         }
                         &:nth-child(5){
                             margin-bottom: 20px;
@@ -242,10 +327,26 @@
                         &:last-child{
                             .postil{
                                 position: relative;
-                                top: 20px;
+                                top: 0;
                             }
                         }
                     }
+                   .note{
+                       margin-bottom: 10px;
+                       position: relative;
+                       .detailTime{
+                           border-spacing: 0 ;
+                           width: 100px;
+                           height: 30px;
+                           background-color: #A7A9AC;
+                           border-radius: 5px;
+                           display: block;
+                           color: #fff;
+                           text-align: center;
+                           line-height: 30px;
+
+                       }
+                   }
                 }
                 #dBtn{
                     position: relative;
@@ -260,5 +361,21 @@
     }
     .complete{
         background-color: #BDC830 !important;
+    }
+    .v-modal{
+        display: none;
+    }
+    .deleteIcon{
+        position: absolute;
+        cursor: pointer;
+        top: 40px;
+        right: 20px;
+        z-index: 888;
+    }
+    .goBack{
+        position: relative;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 </style>

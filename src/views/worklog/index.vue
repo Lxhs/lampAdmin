@@ -108,6 +108,7 @@ export default {
     },
     methods: {
         getPush: function (val) {
+            sessionStorage.setItem('workLogId',JSON.stringify(val.params.data))
             this.$router.push({
                 path: val.path,
                 name: val.name,
