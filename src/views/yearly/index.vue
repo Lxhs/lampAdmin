@@ -19,10 +19,10 @@
                <tr>
                    <td>{{dataList.yearPlanNumber}}</td>
                    <td>{{dataList.firstHalfYearPlanNumber}}</td>
-                   <td>{{dataList.firstHalfYearUndone}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 1}})">{{dataList.firstHalfYearUndone}}</td>
                    <td>{{dataList.secondHalfPlanNumber}}</td>
-                   <td>{{dataList.secondHalfUndone}}</td>
-                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1}})">{{dataList.undone}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 2}})">{{dataList.secondHalfUndone}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 3}})">{{dataList.undone}}</td>
                </tr>
            </table>
        </div>
@@ -35,11 +35,20 @@
                     上半年未完成工作
                 </div>
                 <table>
-                    <tr v-for="(item,index) in dataList.firstHalfPages.list" :key="index">
+                    <tr v-for="(item,index) in firstList" :key="index" class="limited">
                         <td width="150px">{{item.name}}</td>
                         <td style="cursor: pointer" @click="getDetail(item.id)">{{item.title}}</td>
                     </tr>
                 </table>
+                <div class="block">
+                    <el-pagination
+                            layout="prev, pager, next"
+                            :total="firstTotal"
+                            :page-size="firstPageSize"
+                            :current-page.sync="firstCurrentPage"
+                            @current-change="changePageF">
+                    </el-pagination>
+                </div>
             </div>
             <div class="first-half">
                 <div class="first-title">
@@ -47,11 +56,20 @@
                     下半年未完成工作
                 </div>
                 <table>
-                    <tr v-for="(item,index) in dataList.secondHalfPages.list" :key="index">
+                    <tr v-for="(item,index) in secList" :key="index">
                         <td width="150px">{{item.name}}</td>
                         <td style="cursor: pointer" @click="getDetail(item.id)">{{item.title}}</td>
                     </tr>
                 </table>
+                <div class="block">
+                    <el-pagination
+                            layout="prev, pager, next"
+                            :total="secTotal"
+                            :page-size="secPageSize"
+                            :current-page.sync="secCurrentPage"
+                            @current-change="changePageS">
+                    </el-pagination>
+                </div>
             </div>
 
         </div>
@@ -63,12 +81,21 @@
         name: "index",
         data() {
             return {
-                dataList: ''
+                dataList: '',
+                firstList:[],
+                firstTotal: 0,
+                firstPageSize: 5,
+                firstCurrentPage: 1,
+                secList:[],
+                secTotal:0,
+                secPageSize: 5,
+                secCurrentPage: 1,
             }
         },
 
         methods: {
             getPush: function (val) {
+                sessionStorage.setItem('queryConditions',val.params.queryConditions)
                 this.$router.push({
                     path: val.path,
                     name: val.name,
@@ -80,6 +107,7 @@
                 })
             },
             getDetail: function (yearId) {
+                sessionStorage.setItem('yearDetailId',yearId)
                 this.$router.push({
                     path: 'detailY',
                     name: 'detailY',
@@ -92,6 +120,12 @@
                         dataObj: this.msg
                     }*/
                 })
+            },
+            changePageF: function () {
+                this.firstList = this.dataList.firstHalfPages.list.slice((this.firstCurrentPage - 1) * 5,this. firstCurrentPage * 5)
+            },
+            changePageS: function () {
+                this.secList = this.dataList.secondHalfPages.list.slice((this.secCurrentPage - 1) * 5,this. secCurrentPage * 5)
             }
         },
         mounted() {
@@ -106,6 +140,10 @@
             }).then( res => {
                 this.dataList = res.data.data
                 console.log(res);
+                this.firstList = this.dataList.firstHalfPages.list.slice(0,5)
+                this.secList = this.dataList.secondHalfPages.list.slice(0,5)
+                this.firstTotal = this.dataList.firstHalfPages.count
+                this.secTotal = this.dataList.secondHalfPages.count
             })
         }
 
@@ -247,4 +285,18 @@
         }
     }
 }
+    .block{
+        float: right;
+        margin: 10px 20px 0 0;
+    }
+    .limited{
+        td{
+            &:nth-child(2){
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 700px;
+            }
+        }
+    }
 </style>

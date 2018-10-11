@@ -5,19 +5,19 @@
                 <tr>
                     <th colspan="2">上周重点工作反馈</th>
                     <th>本周重点工作计划</th>
-                    <th style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况'}})">累计未完成工作计划</th>
+                    <th >累计未完成工作</th>
                 </tr>
                 <tr>
                     <td>计划</td>
-                    <td>未计划</td>
+                    <td>未完成</td>
                     <td>计划</td>
                     <td>数量</td>
                 </tr>
                 <tr>
                     <td>{{dataList.lastWeeksPlan}}</td>
-                    <td>{{dataList.lastWeeksUndone}}</td>
+                    <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 1}})">{{dataList.lastWeeksUndone}}</td>
                     <td>{{dataList.weeksPlan}}</td>
-                    <td>{{dataList.undone}}</td>
+                    <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 3}})">{{dataList.undone}}</td>
                 </tr>
             </table>
         </div>
@@ -31,11 +31,19 @@
                 </thead>
                 <tr v-for="(item,index) in dataList.pages.list" :key="index">
                     <td>{{item.name}}</td>
-                    <td>{{item.title}}</td>
+                    <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 400px"  @click="getDetail(item.id)">{{item.title}}</td>
                     <td>{{item.planTime | formatDates}}</td>
                 </tr>
-
             </table>
+            <div class="block">
+                <el-pagination
+                        layout="prev, pager, next"
+                        :total="total"
+                        :page-size="pageSize"
+                        :current-page.sync="currentPage"
+                        @current-change="changePage">
+                </el-pagination>
+            </div>
         </div>
     </div>
 </template>
@@ -45,11 +53,16 @@
         name: "index",
         data () {
             return{
-                dataList: ''
+                dataList: '',
+                weekList: [],
+                total: 0,
+                pageSize: 5,
+                currentPage: 1
             }
         },
         methods: {
             getPush: function (val) {
+                sessionStorage.setItem('weekQueryConditions',val.params.queryConditions)
                 this.$router.push({
                     path: val.path,
                     name: val.name,
@@ -59,7 +72,26 @@
                         dataObj: this.msg
                     }*/
                 })
-            }
+            },
+            changePage: function () {
+                this.weekList = this.dataList.pages.list.slice((this.currentPage - 1) * 5,this. currentPage * 5)
+
+            },
+            getDetail: function (weekId) {
+                sessionStorage.setItem('weekPlanId',weekId)
+                this.$router.push({
+                    path: 'detail',
+                    name: 'detailW',
+                    params: {
+                        isShow: 3,
+                        weekId,
+                    }
+                    /*query: {
+                        name: 'name',
+                        dataObj: this.msg
+                    }*/
+                })
+            },
         },
         mounted() {
             this.axios({
@@ -73,6 +105,8 @@
             }).then( res => {
                 console.log(res);
                 this.dataList = res.data.data
+                this.total = this.dataList.pages.count
+                this.weekList = this.dataList.pages.list.slice(0,5)
             })
         }
     }
@@ -82,7 +116,6 @@
     .main{
         width: 1000px;
         margin: 0 auto;
-        overflow: hidden;
         .main-top{
             width: 1000px;
             overflow: hidden;
@@ -184,4 +217,9 @@
             }
         }
     }
+    .block{
+        float: right;
+        margin: 10px 20px 0 0;
+    }
+
 </style>

@@ -315,7 +315,7 @@ export default {
                  this.otherResponsiblePersons.push('')
                 console.log(this.otherResponsiblePersons);
             }else if (status === 'delete'){
-                if (this.otherResponsiblePersons.length >0){
+                if (this.otherResponsiblePersons.length > 1){
                     this.otherResponsiblePersons.pop()
                 }else {
                     this.$message.error('不能再删除了');

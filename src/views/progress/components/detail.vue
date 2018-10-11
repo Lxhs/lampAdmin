@@ -4,7 +4,7 @@
             <thead>
                 <td>序号</td>
                 <td>编号</td>
-                <td >工程名称</td>
+                <td  >工程名称</td>
                 <td>超时</td>
                 <td style="width: 220px;">状态</td>
                 <td style="width: 135px;">时间</td>
@@ -26,6 +26,15 @@
                 <td style="cursor: pointer;" @click="openOp(true,item.id)">详情</td>
             </tr>
         </table>
+        <div class="block">
+            <el-pagination
+                    layout="prev, pager, next"
+                    :total="total"
+                    :page-size="pageSize"
+                    :current-page.sync="currentPage"
+                    @current-change="changePage">
+            </el-pagination>
+        </div>
         <el-button type="info" plain class="goBack" @click="goBack">返回</el-button>
         <div class="popups" v-show="isShowO">
             <div class="detail">
@@ -59,18 +68,20 @@
                         <tr>
                             <td>批注</td>
                             <td>
-                                <div class="note" v-for="(item,index) in projectDetail.projectNotes" :key="index">
+                                <div style="overflow: auto;display: block;max-height: 250px;">
+                                    <div class="note" v-for="(item,index) in projectDetail.projectNotes" :key="index">
                                     <span class="detailTime">
                                         {{item.notesTime}}
                                     </span>
-                                    <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
-                                    <el-input
-                                            type="textarea"
-                                            :rows="4"
-                                            placeholder="请输入内容"
-                                            v-model="item.detail"
-                                            class="postil">
-                                    </el-input>
+                                        <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
+                                        <el-input
+                                                type="textarea"
+                                                :rows="4"
+                                                placeholder="请输入内容"
+                                                v-model="item.detail"
+                                                class="postil">
+                                        </el-input>
+                                    </div>
                                 </div>
                                 <div class="note">
                                     <span class="detailTime" style="background-color: #67C23A;">
@@ -86,26 +97,25 @@
                                 </div>
                             </td>
                         </tr>
-
                     </table>
-
                 </div>
+
                 <el-button type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
 
 
             </div>
         </div>
         <el-dialog
-                title="提示"
-                :visible.sync="dialogVisible"
-                width="30%"
-        >
-            <span>确认要保存吗？</span>
-            <span slot="footer" class="dialog-footer">
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%"
+    >
+        <span>确认要保存吗？</span>
+        <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogVisible = false">取 消</el-button>
                         <el-button type="primary" @click="addNotes">确 定</el-button>
                     </span>
-        </el-dialog>
+    </el-dialog>
     </div>
 </template>
 
@@ -123,7 +133,11 @@
                     detail: ''
                 },
                 dialogVisible: false,
-                updataDetail: ''
+                updataDetail: '',
+                total:0,
+                pageSize: 5,
+                currentPage: 1,
+
             }
         },
         methods: {
@@ -146,6 +160,7 @@
                 }).then( res => {
                     console.log(res);
                     this.projectDetail = res.data.data
+
                 })
 
             },
@@ -178,8 +193,8 @@
                     url: '/ld/project/getProjectList',
                     method: 'post',
                     data: {
-                        pageNo: 1,
-                        pageSize: 5,
+                        pageNo: this.currentPage,
+                        pageSize: this.pageSize,
                         userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
                         projectProgress: JSON.parse(sessionStorage.getItem('projectProgress')),
                         projectName: this.selectList
@@ -197,6 +212,13 @@
                 }).then( res => {
                     console.log(res);
                     this.dataList = res.data.data
+                    this.total = this.dataList.count
+                    if (JSON.stringify(res.data.data.list) === '[]' ){
+                        this.$message({
+                            message: '暂无数据',
+                            type: 'warning'
+                        });
+                    }
                 })
             },
             goBack: function () {
@@ -204,9 +226,13 @@
                     path: 'index',
                     name: 'progress',
                     params: {
-                        isShow: 1
+                        isShow: 2,
+                        title: '工程进度'
                     }
                 })
+            },
+            changePage: function () {
+                this.getProjectList()
             }
         },
         mounted() {
@@ -305,7 +331,7 @@
                     width: 100%;
                     padding: 0 30px 50px 30px;
                     border-collapse:separate;
-                    border-spacing:30px;
+                    border-spacing:15px;
                     overflow: hidden;
                     border-top:  1px dashed #D1D2D4;
                     margin-top: 45px;
@@ -377,5 +403,9 @@
         top: 100px;
         left: 50%;
         transform: translateX(-50%);
+    }
+    .block{
+        float: right;
+        margin: 10px 20px 0 0;
     }
 </style>

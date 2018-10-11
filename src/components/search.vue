@@ -1,13 +1,13 @@
 <template>
-    <div class="search" v-show="isShow !== 3">
-        <div class="search-main" v-if="isShow === 1">
+    <div class="search" v-show="$route.meta.isShow !== 3">
+        <div class="search-main" v-if="$route.meta.isShow === 1">
                 <icon name="搜索" :w="12" :h="12" class="srh" style="color: #818180;"></icon>
                 <input type="text" placeholder="输入部门或关键词"  style="border: none; outline: none; font-size: 12px;height: 24px; width: 290px;" @keyup.enter.active="selectList(select)" v-model="select">
                 <icon name="取消" :w="12" :h="12" class="cancel" @click.native="clear" ></icon>
             </div>
-        <div class="title" v-else-if="isShow === 2">
+        <div class="title" v-else-if="$route.meta.isShow === 2">
             <img src="../assets/images/元素1_05.png" alt="">
-            <span>{{title}}</span>
+            <span>{{$route.meta.title}}</span>
             <img src="../assets/images/元素1_08.png" alt="">
         </div>
     </div>
@@ -28,13 +28,20 @@
             fetchData () {
                 this.$store.state.selectList = ''
                 this.select = ''
-                this.isShow = this.$route.params.isShow
+                if(!this.$route.params.isShow) {
+                    this.isShow = JSON.parse(sessionStorage.getItem('isShow'));
+                }else {
+                    this.isShow = this.$route.params.isShow
+                }
                 if (this.$route.params.title) {
                     this.title = this.$route.params.title
                 }
-                sessionStorage.setItem('isShow', JSON.stringify(this.isShow));
-                sessionStorage.setItem('title', JSON.stringify(this.title))
-
+                if (this.isShow !== ''){
+                    sessionStorage.setItem('isShow', JSON.stringify(this.isShow));
+                }
+                if (this.title !== ''){
+                    sessionStorage.setItem('title', JSON.stringify(this.title))
+                }
             },
             selectList: function (v) {
                 this.$store.state.selectList = v
@@ -45,14 +52,10 @@
         },
         mounted(){
           if (!this.$route.params.isShow){
-              console.log(1111);
               this.isShow = JSON.parse(sessionStorage.getItem('isShow'));
-              console.log(this.isShow);
           }
             if (!this.$route.params.title){
-                console.log(1111);
                 this.title = JSON.parse(sessionStorage.getItem('title'));
-                console.log(this.isShow);
             }
         },
         watch: {

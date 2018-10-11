@@ -18,13 +18,58 @@
                 <td>{{dataList.eventDetails}}</td>
             </tr>
             <tr>
-                <td>批注</td>
+                <td>未完成原因</td>
+                <td>{{dataList.unfinishedReason}}</td>
+            </tr>
+            <tr>
+                <td >批注</td>
                 <td>
-                    <textarea cols="110" rows="10">在这里输入内容...</textarea>
+                    <div style="overflow: auto;display: block;max-height: 250px;">
+                        <div class="note" v-for="(item,index) in dataList.weekPlanNotes" :key="index">
+                                    <span class="detailTime">
+                                        {{item.notesTime}}
+                                    </span>
+                            <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
+                            <el-input
+                                    type="textarea"
+                                    :rows="4"
+                                    placeholder="请输入内容"
+                                    v-model="item.detail"
+                                    class="postil">
+                            </el-input>
+                        </div>
+                    </div>
+                    <div class="note">
+                                    <span class="detailTime" style="background-color: #67C23A;">
+                                        新增
+                                    </span>
+                        <el-input
+                                type="textarea"
+                                :rows="5"
+                                placeholder="请输入内容"
+                                v-model="newDetail.detail"
+                                class="postil">
+                        </el-input>
+                    </div>
                 </td>
             </tr>
         </table>
-        <div class="btn">保存</div>
+        <div class="goBack">
+            <el-button style="margin-left: 30px" type="info" plain  @click="$router.go(-1)">返回</el-button>
+            <el-button type="primary" plain @click="dialogVisible = true">保存</el-button>
+            <!--<div class="btn" @click="dialogVisible = true">保存</div>-->
+        </div>
+        <el-dialog
+                title="提示"
+                :visible.sync="dialogVisible"
+                width="30%"
+        >
+            <span>确认要保存吗？</span>
+            <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="addNotes">确 定</el-button>
+                    </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -32,23 +77,56 @@
     export default {
         name: "detail",
         data() {
-          return {
-              dataList: ''
-          }
+            return {
+                dataList: '',
+                newDetail: {
+                    detail: ''
+                },
+                updataDetail: '',
+                dialogVisible: false
+            }
+        },
+        methods: {
+            deleteNotes: function(index) {
+                this.dataList.weekPlanNotes.splice(index,1)
+            },
+            addNotes: function () {
+                this.dialogVisible = false
+                this.updataDetail = this.dataList
+                if (this.newDetail.detail !== ''){
+                    this.updataDetail.weekPlanNotes.push(this.newDetail)
+                }
+                this.axios({
+                    url: '/ld/weekPlan/updateWeekPlan',
+                    method: 'post',
+                    data: this.updataDetail
+                }).then( res => {
+                    console.log(res);
+                    this.newDetail.detail = ''
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                    });
+                    this.getWeekPlanList()
+                })
+            },
+            getWeekPlanList: function () {
+                this.axios({
+                    method: 'post',
+                    url: '/ld/weekPlan/getWeekPlan',
+                    params:{
+                        id: sessionStorage.getItem('weekPlanId'),
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    }
+                }).then( res => {
+                    console.log(res);
+                    this.dataList = res.data.data
+                    console.log(this.dataList);
+                })
+            }
         },
         mounted() {
-            this.axios({
-                method: 'post',
-                url: '/ld/weekPlan/getWeekPlan',
-                params:{
-                   id: this.$route.params.weekId,
-                   userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
-                }
-            }).then( res => {
-                console.log(res);
-                this.dataList = res.data.data
-                console.log(this.dataList);
-            })
+            this.getWeekPlanList()
         }
     }
 </script>
@@ -68,6 +146,9 @@
                 background-color: #E7E8E9;
                 color: #454547;
                 font-size: 14px;
+                td{
+                    word-break : break-all;
+                }
                 td:nth-child(1){
                     width: 10%;
                     padding-left: 10px;
@@ -105,5 +186,33 @@
             letter-spacing: 2px;
             cursor: pointer;
         }
+        .note{
+            margin-bottom: 10px;
+            position: relative;
+            .detailTime{
+                border-spacing: 0 ;
+                width: 100px;
+                height: 30px;
+                background-color: #A7A9AC;
+                border-radius: 5px;
+                display: block;
+                color: #fff;
+                text-align: center;
+                line-height: 30px;
+
+            }
+        }
+        .deleteIcon{
+            position: absolute;
+            cursor: pointer;
+            top: 40px;
+            right: 20px;
+            z-index: 888;
+        }
+    }
+    .goBack{
+        margin: 50px auto;
+        width: 200px;
+        padding: 20px;
     }
 </style>

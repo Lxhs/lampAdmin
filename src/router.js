@@ -20,7 +20,7 @@ const router =  new Router({
         },
       children:[{
         path: 'home',
-          meta:{requireAuth:true},
+          meta:{requireAuth:true,isShow: 3},
           component: () => import('./views/home/index'),
       }]
     },
@@ -36,7 +36,10 @@ const router =  new Router({
         children:[{
             path: 'index',
             name: 'home',
-            meta:{requireAuth:true},
+            meta:{
+                requireAuth:true,
+                isShow: 3
+            },
             component: () => import('./views/home/index')
         }]
     },
@@ -47,18 +50,30 @@ const router =  new Router({
         children: [{
               path: 'index',
               name: 'yearly',
-             meta:{requireAuth:true},
+             meta:{
+                  requireAuth:true,
+                 title: '年度计划工作',
+                 isShow: 2
+             },
                 component: () => import('./views/yearly/index'),
             },
             {
             path: 'undone',
             name: 'undone',
-            meta:{requireAuth:true},
+            meta:{
+                requireAuth:true,
+                title: '',
+                isShow: 1
+            },
             component: () => import('./views/yearly/components/undone')
         },{
                 path: 'detailY',
                 name: 'detailY',
-                meta:{requireAuth:true},
+                meta:{
+                    requireAuth:true,
+                    title: '',
+                    isShow: 3
+                },
                 component: () => import('./views/yearly/components/detailY')
             }
         ]
@@ -69,21 +84,24 @@ const router =  new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: Layout,
-        meta:{requireAuth:true},
+        meta:{
+            requireAuth:true,
+
+        },
       children:[{
           path: 'index',
           name: 'weekly',
-          meta:{requireAuth:true},
+          meta:{requireAuth:true, isShow: 2, title: '每周完成工作情况'},
           component: () => import('./views/weekly/index')
       },{
           path: 'undone',
           name: 'undoneW',
-          meta:{requireAuth:true},
+          meta:{requireAuth:true,isShow: 2, title: '累计未完成工作情况'},
           component: () => import('./views/weekly/components/undoneW')
       },{
           path: 'detail',
           name: 'detailW',
-          meta:{requireAuth:true},
+          meta:{requireAuth:true,isShow: 3},
           component: () => import('./views/weekly/components/detail')
       }
       ]
@@ -98,13 +116,13 @@ const router =  new Router({
         children:[{
             path: 'index',
             name: 'progress',
-            meta:{requireAuth:true},
+            meta:{requireAuth:true,isShow: 2,title: '工程进度'},
             component: () => import('./views/progress/index')
         },
             {
                 path: 'detail',
                 name: 'detailP',
-                meta:{requireAuth:true},
+                meta:{requireAuth:true,isShow: 1},
                 component: () => import('./views/progress/components/detail')
             },
         ]
@@ -119,7 +137,7 @@ const router =  new Router({
           children:[{
               path: 'index',
               name: 'waterLog',
-              meta:{requireAuth:true},
+              meta:{requireAuth:true,isShow: 2, title: '渍水情况'},
               component: () => import('./views/waterlog/index')
           }]
       },
@@ -133,17 +151,17 @@ const router =  new Router({
           children:[{
               path: 'index',
               name: 'workLog',
-              meta:{requireAuth:true},
+              meta:{requireAuth:true,isShow: 1},
               component: () => import('./views/worklog/index')
           },{
               path: 'workEdit',
               name: 'workEdit',
-              meta:{requireAuth:true},
+              meta:{requireAuth:true,isShow: 3},
               component: () => import('./views/worklog/components/workEdit')
           },{
               path: 'workAdd',
               name: 'workAdd',
-              meta:{requireAuth:true},
+              meta:{requireAuth:true,isShow: 3},
               component: () => import('./views/worklog/components/workAdd')
           }
           ]

@@ -38,7 +38,7 @@
          </tr>
          <tr v-for="(item,index) in dataList.list" :key="index">
              <td>{{ item.recordTime | formatDates}}</td>
-             <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; width: 340px;" :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+             <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
              <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                  <ul class="labelCol">
                      <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"

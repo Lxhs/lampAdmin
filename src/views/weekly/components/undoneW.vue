@@ -3,25 +3,25 @@
         <table width="960px">
             <thead>
                 <td width="20%">部门</td>
-                <td width="40%" >工作内容</td>
+                <td width="40%"  >工作内容</td>
                 <td width="40%">进度</td>
             </thead>
             <tr v-for="(item, index) in dataList.list" :key="index">
                 <td>{{item.name}}</td>
-                <td style="cursor: pointer" @click="getPush(item.id)">{{item.title}}</td>
+                <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 400px" @click="getPush(item.id)">{{item.title}}</td>
                 <td>{{planStatus[item.planState - 1]}}</td>
             </tr>
-            <tr>
-                <td>建设中心</td>
-                <td>对上级行政文件，会议精神和行政办公会议定事项的监督检查</td>
-                <td>未完成</td>
-            </tr>
-            <tr>
-                <td>财务科</td>
-                <td>对上级行政文件，会议精神和行政办公会议定事项的监督检查</td>
-                <td>阶段性完成</td>
-            </tr>
         </table>
+        <div class="block">
+            <el-pagination
+                    layout="prev, pager, next"
+                    :total="total"
+                    :page-size="pageSize"
+                    :current-page.sync="currentPage"
+                    @current-change="changePage">
+            </el-pagination>
+        </div>
+        <el-button type="info" plain class="goBack" @click="goBack">返回</el-button>
     </div>
 </template>
 
@@ -31,11 +31,15 @@
         data() {
             return{
                 dataList: '',
-                planStatus: ['未完成','阶段性完成','已完成']
+                planStatus: ['未完成','阶段性完成','已完成'],
+                total: 0,
+                pageSize: 5,
+                currentPage: 1,
             }
         },
         methods: {
             getPush: function (weekId) {
+                sessionStorage.setItem('weekPlanId',weekId)
                 this.$router.push({
                     path: 'detail',
                     name: 'detailW',
@@ -48,22 +52,32 @@
                         dataObj: this.msg
                     }*/
                 })
+            },
+            changePage: function () {
+                this.getWeekList()
+            },
+            getWeekList: function () {
+                this.axios({
+                    method: 'post',
+                    url: '/ld/weekPlan/undoneList',
+                    params:{
+                        pageNo: this.currentPage,
+                        pageSize: this.pageSize,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                        queryConditions: sessionStorage.getItem('weekQueryConditions')
+                    }
+                }).then( res => {
+                    console.log(res);
+                    this.dataList = res.data.data
+                    this.total = this.dataList.count
+                })
+            },
+            goBack: function () {
+                this.$router.go(-1)
             }
         },
         mounted() {
-            this.axios({
-                method: 'post',
-                url: '/ld/weekPlan/undoneList',
-                params:{
-                    pageNo: 1,
-                    pageSize: 10,
-                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
-                    queryCondition: 3
-                }
-            }).then( res => {
-                console.log(res);
-                this.dataList = res.data.data
-            })
+            this.getWeekList()
         }
     }
 </script>
@@ -72,7 +86,6 @@
     .main{
         width: 1000px;
         margin: 70px auto 0;
-        overflow: hidden;
         table{
             width: 960px;
             margin: 0 auto;
@@ -111,8 +124,19 @@
                         border-left: 1px solid #A8A8AA;
                         border-right: 1px solid #A8A8AA;
                     }
+                    word-break : break-all;
                 }
             }
         }
+    }
+    .block{
+        float: right;
+        margin: 10px 20px 0 0;
+    }
+    .goBack{
+        position: relative;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 </style>

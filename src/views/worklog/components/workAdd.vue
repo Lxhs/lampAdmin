@@ -324,7 +324,7 @@
                 if (status === 1){
                     this.otherResponsiblePersons.push('')
                 }else if (status === 2){
-                    if (this.otherResponsiblePersons.length >0){
+                    if (this.otherResponsiblePersons.length >1){
                         this.otherResponsiblePersons.pop()
                     }else {
                         this.$message.error('不能再删除了');

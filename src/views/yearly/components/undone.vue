@@ -8,37 +8,101 @@
                 <th>责任部门</th>
             </tr>
             <tr v-for="(item, index) in dataList.list" :key="index">
-                <td>{{item.title}}</td>
-                <td class="isOverdue">{{item.planTime | formatDates}}</td>
+                <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 200px" @click="getDetail(item.id)">{{item.title}}</td>
+                <td :class="item.overTime === 1 ? 'isOverdue' : ''" >{{item.yearHalf === 1 ? '上半年' : '下半年'}}{{item.overTime === 1 ? '（已超时）': ''}}</td>
                 <td>{{item.planState === 1 ? '已完成' : '未完成'}}</td>
                 <td>{{item.name}}</td>
             </tr>
         </table>
+        <div class="block">
+            <el-pagination
+                    layout="prev, pager, next"
+                    :total="total"
+                    :page-size="pageSize"
+                    :current-page.sync="currentPage"
+                    @current-change="changePage">
+            </el-pagination>
+        </div>
+        <el-button type="info" plain class="goBack" @click="goBack">返回</el-button>
     </div>
 </template>
 
 <script>
+    import {mapState} from "vuex";
     export default {
         name: "detail",
         data() {
           return {
-              dataList: ''
+              dataList: '',
+              currentPage: 1,
+              pageSize: 5,
+              total: 0
           }
         },
+        methods: {
+            getDetail: function (yearId) {
+                sessionStorage.setItem('yearDetailId',yearId)
+                this.$router.push({
+                    path: 'detailY',
+                    name: 'detailY',
+                    params: {
+                        isShow: 3,
+                        yearId,
+                    }
+                    /*query: {
+                        name: 'name',
+                        dataObj: this.msg
+                    }*/
+                })
+            },
+            changePage: function () {
+                this.getYearPlanList()
+            },
+            getYearPlanList: function () {
+                this.axios({
+                    method: 'post',
+                    url: '/ld/yearPlan/undoneList',
+                    params:{
+                        pageNo: this.currentPage,
+                        pageSize: this.pageSize,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                        queryConditions : sessionStorage.getItem('queryConditions'),
+                        title: this.selectList
+                    }
+                }).then( res => {
+                    this.dataList = res.data.data
+                    console.log(res);
+                    this.total = this.dataList.count
+                    if (JSON.stringify(res.data.data.list) === '[]' ){
+                        this.$message({
+                            message: '暂无数据',
+                            type: 'warning'
+                        });
+                    }
+                })
+            },
+            goBack: function () {
+                //     this.$router.push({
+                //         path: 'index',
+                //         name: 'yearly',
+                //         params:{
+                //             isShow: 2,
+                //             title: '年度计划工作'
+                //         }
+                //     })
+                this.$router.go(-1)
+            }
+        },
         mounted() {
-            this.axios({
-                method: 'post',
-                url: '/ld/yearPlan/undoneList',
-                params:{
-                    pageNo: 1,
-                    pageSize: 10,
-                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
-                    queryConditions : 3
-                }
-            }).then( res => {
-                this.dataList = res.data.data
-                console.log(res);
+           this.getYearPlanList()
+        },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
             })
+        },
+        watch: {
+            'selectList' :  'getYearPlanList',
         }
     }
 </script>
@@ -47,8 +111,7 @@
 .main{
         width: 1000px;
         margin: 30px auto;
-        overflow: hidden;
-        table{
+    table{
         width: 960px;
         margin: 0 auto;
         tr{
@@ -90,7 +153,18 @@
                 border: 0;
             }
         }
+
     }
+    .block{
+        float: right;
+        margin-top: 40px;
     }
 
+}
+.goBack{
+    position: relative;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
 </style>

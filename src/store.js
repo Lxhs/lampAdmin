@@ -14,7 +14,9 @@ export default new Vuex.Store({
       roles: [],
       selectList: '',
       title: '',
-      user: {}
+      user: {},
+      isShow:'',
+      nameTitle: ''
   },
   mutations: {
       [types.LOGIN]: (state, data) => {
