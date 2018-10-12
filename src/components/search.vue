@@ -2,7 +2,7 @@
     <div class="search" v-show="$route.meta.isShow !== 3">
         <div class="search-main" v-if="$route.meta.isShow === 1">
                 <icon name="搜索" :w="12" :h="12" class="srh" style="color: #818180;"></icon>
-                <input type="text" placeholder="输入部门或关键词"  style="border: none; outline: none; font-size: 12px;height: 24px; width: 290px;" @keyup.enter.active="selectList(select)" v-model="select">
+                <input type="text" placeholder="输入部门或关键词"  style="border: none; outline: none; font-size: 12px;height: 24px; width: 290px;" @keyup.enter.active="selectList($store.state.selectList)" v-model="$store.state.selectList">
                 <icon name="取消" :w="12" :h="12" class="cancel" @click.native="clear" ></icon>
             </div>
         <div class="title" v-else-if="$route.meta.isShow === 2">
@@ -26,8 +26,7 @@
         methods: {
             //
             fetchData () {
-                this.$store.state.selectList = ''
-                this.select = ''
+                // this.$store.state.selectList = ''
                 if(!this.$route.params.isShow) {
                     this.isShow = JSON.parse(sessionStorage.getItem('isShow'));
                 }else {
@@ -47,7 +46,7 @@
                 this.$store.state.selectList = v
             },
             clear:function () {
-                this.select = ''
+                this.$store.state.selectList = ''
             }
         },
         mounted(){

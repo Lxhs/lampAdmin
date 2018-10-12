@@ -91,6 +91,10 @@
                 //         }
                 //     })
                 this.$router.go(-1)
+            },
+            searchKeys: function () {
+                this.currentPage = 1
+                this.getYearPlanList()
             }
         },
         mounted() {
@@ -102,7 +106,7 @@
             })
         },
         watch: {
-            'selectList' :  'getYearPlanList',
+            'selectList' :  'searchKeys',
         }
     }
 </script>

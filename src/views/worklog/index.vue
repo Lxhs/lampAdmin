@@ -103,7 +103,7 @@ export default {
           titleStates:['所有','标注'],
           labelColor: ['#ED1C24','#F2ED84','#00AEEF','#8CC63F'],
           titleCss: '',
-          recordTime: ''
+          recordTime: '',
       }
     },
     methods: {
@@ -211,9 +211,25 @@ export default {
             this.currentPage = 1
             this.getData()
         },
+        searchKeys:function () {
+            this.currentPage = 1
+            this.getData()
+        }
     },
     mounted(){
         this.getData()
+    },
+    beforeRouteEnter(to, from, next){
+        next(vm=>{
+            console.log(vm)
+            // 每次进入路由执行
+            vm.getData()
+        })
+    },
+    beforeRouteLeave(to, from, next) {
+        console.log(123);
+        // from.meta.keepAlive = false;
+        next();
     },
     computed: {
         ...mapState({
@@ -221,9 +237,13 @@ export default {
         })
     },
     watch: {
-        'selectList' :  'getData',
-        'recordTime' : 'getData'
-    }
+        'selectList' :  'searchKeys',
+        'recordTime' : 'getData',
+        // $route (to,from) {
+        //     from.meta.keepAlive = false;
+        // }
+    },
+
 
 }
 </script>

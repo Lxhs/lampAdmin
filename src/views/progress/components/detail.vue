@@ -99,8 +99,10 @@
                         </tr>
                     </table>
                 </div>
-
-                <el-button type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
+                <div class="btnList">
+                    <el-button type="info" @click="openOp(false)" plain>返回</el-button>
+                    <el-button type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
+                </div>
 
 
             </div>
@@ -233,10 +235,15 @@
             },
             changePage: function () {
                 this.getProjectList()
+            },
+            searchKeys: function () {
+                this.currentPage = 1
+                this.getProjectList()
             }
         },
         mounted() {
           this.getProjectList()
+           this.$store.state.selectList = ''
         },
         computed: {
             ...mapState({
@@ -244,7 +251,7 @@
             })
         },
         watch: {
-            'selectList' :  'getProjectList',
+            'selectList' :  'searchKeys',
         }
     }
 </script>
@@ -375,12 +382,11 @@
                    }
                 }
                 #dBtn{
-                    position: relative;
-                    left: 50%;
-                    top: 0;
-                    transform: translateX(-50%);
-                    margin-bottom: 50px;
                     width: 140px;
+                }
+                .btnList{
+                    width: 230px;
+                    margin: 50px auto;
                 }
             }
         }

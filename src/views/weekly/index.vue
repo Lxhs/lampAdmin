@@ -24,10 +24,10 @@
         <div class="main-bottom">
             <span>累计未完成工作</span>
             <table width="865px">
-                <thead>
+                <thead style="border-spacing: 0">
                     <td>部门</td>
-                    <td width="43%">内容</td>
-                    <td width="43%">时间</td>
+                    <td style="padding-left: 10px" width="40%">内容</td>
+                    <td style="text-align: center" width="38%">时间</td>
                 </thead>
                 <tr v-for="(item,index) in dataList.pages.list" :key="index">
                     <td>{{item.name}}</td>
@@ -184,7 +184,7 @@
             table{
                 margin-top: 20px;
                 border-collapse: separate;
-                border-spacing:0 15px;
+                border-spacing:10px;
                 thead{
                     height: 28px;
                     line-height: 28px;
@@ -203,6 +203,12 @@
                     margin-top: 20px;
 
                     td:nth-child(1){
+                        text-align: center;
+                    }
+                    td:nth-child(2){
+                        padding: 0 10px;
+                    }
+                    td:nth-child(3){
                         text-align: center;
                     }
                     td{

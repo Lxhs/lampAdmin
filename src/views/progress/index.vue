@@ -58,6 +58,9 @@
             this.axios({
                 url: '/ld/project/statistical',
                 method: 'post',
+                params: {
+                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                }
             }).then( res => {
                 console.log(res);
                 this.progress = res.data.data

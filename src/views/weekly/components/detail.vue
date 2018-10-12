@@ -191,7 +191,7 @@
             position: relative;
             .detailTime{
                 border-spacing: 0 ;
-                width: 100px;
+                width: 85px;
                 height: 30px;
                 background-color: #A7A9AC;
                 border-radius: 5px;

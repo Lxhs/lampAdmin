@@ -65,14 +65,14 @@
                         class="textarea"
                         >
                 </el-input>
-                <icon name="添加" :w="12" :h="12" class=" ii2" @click.native="add1" :plain="true"></icon>
+                <icon name="添加" :w="12" :h="12" class=" ii2" @click.stop.native="add1" :plain="true"></icon>
             </div>
             <div class="main-m">
                 <ul>
                     <li  v-for="(item,index) in bookContent2" :key="index" @click="changeColor(1,index)" :style="{backgroundColor : item.contentCss}" >
                         <span class="serial" :style="{backgroundColor: colors[index % 3]}">{{index+1}}</span>
-                        <icon name="添加" :w="12" :h="12" class=" ii1" @click.native="add2(index)"></icon>
-                        <icon  name="垃圾箱" :w="12" :h="12" class=" remove" @click.native="deleteList(index)" ></icon>
+                        <icon name="添加" :w="12" :h="12" class=" ii1" @click.stop.native="add2(index)"></icon>
+                        <icon  name="垃圾箱" :w="12" :h="12" class=" remove" @click.stop.native="deleteList(index)" ></icon>
                         <el-input
                                 type="textarea"
                                 :rows="1"
@@ -135,7 +135,7 @@
                                     :style="{backgroundColor: contentColorA[index]}"
                             >
                             </el-input>
-                            <icon  name="垃圾箱" :w="12" :h="12" class=" remove" @click.native="deleteOne(index,indexS)" ></icon>
+                            <icon  name="垃圾箱" :w="12" :h="12" class=" remove" @click.stop.native="deleteOne(index,indexS)" ></icon>
                         </li>
                     </ul>
 
@@ -191,9 +191,6 @@ export default {
             dataList: '',
             bookContent: '',
             bookContent2: '',
-            bookContent2a: '',
-            bookContent2b: '',
-            bookContent2c: '',
             inputValue: [],    //中间批注的 3个固定模块的 内容值
             inputValueA: [],   // 2模块的内容值集合
             inputValueB: [],  // 2模块的内容值集合
@@ -205,7 +202,8 @@ export default {
             otherResponsiblePersons: [''],
             responsiblePersonId:[],
             contentCss: '',
-            titleCol: ''
+            titleCol: '',
+            isSave: false
         }
     },
     methods: {
@@ -243,33 +241,42 @@ export default {
             }
         },
         add2: function (index) {
-           if (index === 0){
-                this.inputValueA.push('')
-                this.$set(this.bookContent2a.bookContents,this.bookContent2a.bookContents.length,{
-                    contentDesc : '',
-                    contentCss : '',
-                    contentNo: '1.'+  (this.bookContent2a.bookContents.length + 1),
-                    parentNo: 1
-                })
-
-            }else  if (index === 1){
-               this.inputValueB.push('')
-               let num2b = this.bookContent2b.bookContents.length
-               this.$set(this.bookContent2b.bookContents,num2b,{
-                   contentDesc : '',
-                   contentCss : '',
-                   contentNo: '2.'+  (this.bookContent2b.bookContents.length + 1),
-                   parentNo: 2
-               })
-           } else if (index === 2) {
-               this.inputValueC.push('')
-               this.$set(this.bookContent2c.bookContents,this.bookContent2c.bookContents.length,{
-                   contentDesc : '',
-                   contentCss : '',
-                   contentNo: '3.'+  (this.bookContent2c.bookContents.length + 1),
-                   parentNo: 3
-               })
-           }
+            console.log('index' + index);
+           //  if (index === 0){
+           //      console.log('index = 0');
+           //      // this.inputValueA.push('')
+           //      this.$set(this.bookContent2a.bookContents,this.bookContent2a.bookContents.length,{
+           //          contentDesc : '',
+           //          contentCss : '',
+           //          contentNo: '1.'+  (this.bookContent2a.bookContents.length + 1),
+           //          parentNo: 1
+           //      })
+           //
+           //  }else  if (index === 1){
+           //     // this.inputValueB.push('')
+           //     let num2b = this.bookContent2b.bookContents.length
+           //     this.$set(this.bookContent2b.bookContents,num2b,{
+           //         contentDesc : '',
+           //         contentCss : '',
+           //         contentNo: '2.'+  (this.bookContent2b.bookContents.length + 1),
+           //         parentNo: 2
+           //     })
+           // } else if (index === 2) {
+           //     // this.inputValueC.push('')
+           //     this.$set(this.bookContent2c.bookContents,this.bookContent2c.bookContents.length,{
+           //         contentDesc : '',
+           //         contentCss : '',
+           //         contentNo: '3.'+  (this.bookContent2c.bookContents.length + 1),
+           //         parentNo: 3
+           //     })
+           // }
+            this.$set(this.bookContent2[index].bookContents,this.bookContent2[index].bookContents.length,{
+                bookContents: [],
+                contentDesc : '',
+                contentCss : '',
+                contentNo: (index + 1) + '.' + (this.bookContent2[index].bookContents.length + 1),
+                parentNo: index + 1
+            })
         },
         deleteList: function(index) {
             this.bookContent2.splice(index,1)
@@ -282,13 +289,13 @@ export default {
                 }
 
             }
-            if (index === 0){
-                this.bookContent2a.bookContents = []
-            } else if (index === 1){
-                this.bookContent2b.bookContents = []
-            } else if (index === 2){
-                this.bookContent2c.bookContents = []
-            }
+            // if (index === 0){
+            //     this.bookContent2a.bookContents = []
+            // } else if (index === 1){
+            //     this.bookContent2b.bookContents = []
+            // } else if (index === 2){
+            //     this.bookContent2c.bookContents = []
+            // }
         },
         deleteOne: function(index,indexS){
             this.bookContent2[index].bookContents.splice(indexS,1)
@@ -410,32 +417,25 @@ export default {
                         this.$set(this.inputValue,i, this.bookContent2[i].contentDesc)
                         this.$set(this.contentColor,i, this.bookContent2[i].contentCss)
                     }
-                    if (this.bookContent2a.bookContents.length > 0){
-                        for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
-                            this.$set(this.inputValueA,i, this.bookContent2a.bookContents[i].contentDesc)
-                            this.$set(this.contentColorA,i, this.bookContent2a.bookContents[i].contentCss)
-                        }
-                    }
-                    if (this.bookContent2b.bookContents.length > 0) {
-                        for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
-                            this.$set(this.inputValueB,i, this.bookContent2b.bookContents[i].contentDesc)
-                            this.$set(this.contentColorB,i, this.bookContent2b.bookContents[i].contentCss)
-                        }
-                    }
-                    if (this.bookContent2c.bookContents.length > 0) {
-                        for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
-                            this.$set(this.inputValueC,i, this.bookContent2c.bookContents[i].contentDesc)
-                            this.$set(this.contentColorC,i, this.bookContent2c.bookContents[i].contentCss)
-                        }
-                    }
-
-
-
+                    // if (this.bookContent2a.bookContents.length > 0){
+                    //     for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
+                    //         this.$set(this.inputValueA,i, this.bookContent2a.bookContents[i].contentDesc)
+                    //         this.$set(this.contentColorA,i, this.bookContent2a.bookContents[i].contentCss)
+                    //     }
+                    // }
+                    // if (this.bookContent2b.bookContents.length > 0) {
+                    //     for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
+                    //         this.$set(this.inputValueB,i, this.bookContent2b.bookContents[i].contentDesc)
+                    //         this.$set(this.contentColorB,i, this.bookContent2b.bookContents[i].contentCss)
+                    //     }
+                    // }
+                    // if (this.bookContent2c.bookContents.length > 0) {
+                    //     for (let i = 0; i < this.bookContent2a.bookContents.length; i++) {
+                    //         this.$set(this.inputValueC,i, this.bookContent2c.bookContents[i].contentDesc)
+                    //         this.$set(this.contentColorC,i, this.bookContent2c.bookContents[i].contentCss)
+                    //     }
+                    // }
                 }
-                console.log(this.bookContent2a);
-                console.log(this.bookContent2b);
-                console.log(this.bookContent2c);
-
 
                 this.$forceUpdate()
             })
@@ -500,15 +500,28 @@ export default {
             console.log(1);
         },
         goBack: function () {
-            this.$router.push({
-                path: 'index',
-                name: 'workLog',
-                params: {
-                    isShow: 1
-                }
-            })
+            // this.$router.push({
+            //     path: 'index',
+            //     name: 'workLog',
+            //     params: {
+            //         isShow: 1
+            //     }
+            // })
+            this.$router.go(-1)
+
         }
 
+    },
+    beforeRouteLeave(to, from, next) {
+
+        if (to.path === "/workLog/index") {
+            console.log(this.isSave);
+            to.meta.keepAlive = true;
+        } else {
+            to.meta.keepAlive = false;
+        }
+
+        next();
     },
     computed:{
 

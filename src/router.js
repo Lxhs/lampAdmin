@@ -20,7 +20,7 @@ const router =  new Router({
         },
       children:[{
         path: 'home',
-          meta:{requireAuth:true,isShow: 3},
+          meta:{requireAuth:true,isShow: 3,keepAlive: false},
           component: () => import('./views/home/index'),
       }]
     },
@@ -38,7 +38,8 @@ const router =  new Router({
             name: 'home',
             meta:{
                 requireAuth:true,
-                isShow: 3
+                isShow: 3,
+                keepAlive: false
             },
             component: () => import('./views/home/index')
         }]
@@ -53,7 +54,8 @@ const router =  new Router({
              meta:{
                   requireAuth:true,
                  title: '年度计划工作',
-                 isShow: 2
+                 isShow: 2,
+                 keepAlive: false
              },
                 component: () => import('./views/yearly/index'),
             },
@@ -63,7 +65,8 @@ const router =  new Router({
             meta:{
                 requireAuth:true,
                 title: '',
-                isShow: 1
+                isShow: 1,
+                keepAlive: false
             },
             component: () => import('./views/yearly/components/undone')
         },{
@@ -72,7 +75,8 @@ const router =  new Router({
                 meta:{
                     requireAuth:true,
                     title: '',
-                    isShow: 3
+                    isShow: 3,
+                    keepAlive: false
                 },
                 component: () => import('./views/yearly/components/detailY')
             }
@@ -91,17 +95,17 @@ const router =  new Router({
       children:[{
           path: 'index',
           name: 'weekly',
-          meta:{requireAuth:true, isShow: 2, title: '每周完成工作情况'},
+          meta:{requireAuth:true, isShow: 2, title: '每周完成工作情况',keepAlive: false},
           component: () => import('./views/weekly/index')
       },{
           path: 'undone',
           name: 'undoneW',
-          meta:{requireAuth:true,isShow: 2, title: '累计未完成工作情况'},
+          meta:{requireAuth:true,isShow: 2, title: '累计未完成工作情况',keepAlive: false},
           component: () => import('./views/weekly/components/undoneW')
       },{
           path: 'detail',
           name: 'detailW',
-          meta:{requireAuth:true,isShow: 3},
+          meta:{requireAuth:true,isShow: 3,keepAlive: false},
           component: () => import('./views/weekly/components/detail')
       }
       ]
@@ -116,13 +120,13 @@ const router =  new Router({
         children:[{
             path: 'index',
             name: 'progress',
-            meta:{requireAuth:true,isShow: 2,title: '工程进度'},
+            meta:{requireAuth:true,isShow: 2,title: '工程进度',keepAlive: false},
             component: () => import('./views/progress/index')
         },
             {
                 path: 'detail',
                 name: 'detailP',
-                meta:{requireAuth:true,isShow: 1},
+                meta:{requireAuth:true,isShow: 1,keepAlive: false},
                 component: () => import('./views/progress/components/detail')
             },
         ]
@@ -137,7 +141,7 @@ const router =  new Router({
           children:[{
               path: 'index',
               name: 'waterLog',
-              meta:{requireAuth:true,isShow: 2, title: '渍水情况'},
+              meta:{requireAuth:true,isShow: 2, title: '渍水情况',keepAlive: false},
               component: () => import('./views/waterlog/index')
           }]
       },
@@ -147,21 +151,21 @@ const router =  new Router({
           // this generates a separate chunk (about.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
           component: Layout,
-        meta:{requireAuth:true},
+          meta:{requireAuth:true},
           children:[{
               path: 'index',
               name: 'workLog',
-              meta:{requireAuth:true,isShow: 1},
+              meta:{requireAuth:true,isShow: 1,keepAlive: true},
               component: () => import('./views/worklog/index')
           },{
               path: 'workEdit',
               name: 'workEdit',
-              meta:{requireAuth:true,isShow: 3},
+              meta:{requireAuth:true,isShow: 3,keepAlive: false},
               component: () => import('./views/worklog/components/workEdit')
           },{
               path: 'workAdd',
               name: 'workAdd',
-              meta:{requireAuth:true,isShow: 3},
+              meta:{requireAuth:true,isShow: 3,keepAlive: false},
               component: () => import('./views/worklog/components/workAdd')
           }
           ]

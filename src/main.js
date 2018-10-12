@@ -27,8 +27,10 @@ import vfilters from  './filter/filter'
 // }
 
 Object.keys(vfilters).forEach(key => Vue.filter(key, vfilters[key]));
-
+//线上接口
 axios.defaults.baseURL='http://101.132.141.115:9095/ldview-interface/f'
+//路灯局接口
+// axios.defaults.baseURL='http://172.16.10.160:9095/ldview-interface/f'
 // axios.defaults.baseURL='http://192.168.4.109:9095/ldview-interface/f'
 
 

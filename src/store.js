@@ -16,7 +16,9 @@ export default new Vuex.Store({
       title: '',
       user: {},
       isShow:'',
-      nameTitle: ''
+      nameTitle: '',
+      workLogCurrentPage: 1,
+      workLogTotal: 0,
   },
   mutations: {
       [types.LOGIN]: (state, data) => {
