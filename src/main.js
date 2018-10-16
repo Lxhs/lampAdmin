@@ -10,6 +10,11 @@ import ElementUI from 'element-ui';
 import axios from 'axios'
 import qs from 'qs'
 import vfilters from  './filter/filter'
+import IScrollView from 'vue-iscroll-view'
+import IScroll from 'iscroll'
+
+
+Vue.use(IScrollView, IScroll)
 // import zh from 'vee-validate/dist/locale/zh_CN';
 //
 // Validator.addLocale(zh);

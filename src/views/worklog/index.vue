@@ -1,87 +1,90 @@
 <template>
- <div class="main">
-     <table>
-         <tr>
-             <th style="width: 150px;">
-                 <el-date-picker
-                         v-model="recordTime"
-                         type="date"
-                         placeholder="选择日期"
-                         style="width: 120px; font-size: 12px"
-                         value-format="yyyy-MM-dd HH:mm:ss"
-                 class="selectTime">
-                 </el-date-picker>
-             </th>
-             <th>
-                 <el-dropdown size="medium" trigger="click" placement="bottom">
+    <iscroll-view class="scroll-view"  @pullUp="load" @pullDown="refresh">
+        <div class="main">
+            <table>
+                <tr>
+                    <th style="width: 150px;">
+                        <el-date-picker
+                                v-model="recordTime"
+                                type="date"
+                                placeholder="选择日期"
+                                style="width: 120px; font-size: 12px"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                class="selectTime">
+                        </el-date-picker>
+                    </th>
+                    <th>
+                        <el-dropdown size="medium" trigger="click" placement="bottom">
                       <span class="el-dropdown-link" style="cursor: pointer">
                         标题<i class="el-icon-arrow-down el-icon--right"></i>
                       </span>
-                     <el-dropdown-menu slot="dropdown">
-                         <el-dropdown-item v-for="(item,index) in titleStates" :key="index" @click.native="changeTitleCss(index)">{{item}}</el-dropdown-item>
-                     </el-dropdown-menu>
-                 </el-dropdown>
-             </th>
-             <th>内容标记颜色</th>
-             <th>
-                 <el-dropdown size="medium" trigger="click" placement="bottom">
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="(item,index) in titleStates" :key="index" @click.native="changeTitleCss(index)">{{item}}</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </th>
+                    <th>内容标记颜色</th>
+                    <th>
+                        <el-dropdown size="medium" trigger="click" placement="bottom">
                       <span class="el-dropdown-link" style="cursor: pointer">
                         状态<i class="el-icon-arrow-down el-icon--right"></i>
                       </span>
-                     <el-dropdown-menu slot="dropdown">
-                         <el-dropdown-item v-for="(item,index) in workSatesList" :key="index" @click.native="changeWorkState(index)">{{item}}</el-dropdown-item>
-                     </el-dropdown-menu>
-                 </el-dropdown>
-             </th>
-             <th>责任人</th>
-             <th>操作</th>
-         </tr>
-         <tr v-for="(item,index) in dataList.list" :key="index">
-             <td>{{ item.recordTime | formatDates}}</td>
-             <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
-             <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-                 <ul class="labelCol">
-                     <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
-                         v-show="item.contentColors.indexOf(color)  !== -1 "></li>
-                     <!--<li style="background-color: #00AEEF;"></li>-->
-                     <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
-                     <!--<li style="background-color: #ED1C24;"></li>-->
-                 </ul>
-             </td>
-             <td>{{workSates[item.workState - 1]}}</td>
-             <td>{{item.bookResponsibleNames[0]}}</td>
-             <td >
-                 <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
-                 <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
-             </td>
-         </tr>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="(item,index) in workSatesList" :key="index" @click.native="changeWorkState(index)">{{item}}</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </th>
+                    <th>责任人</th>
+                    <th>操作</th>
+                </tr>
+                <tr v-for="(item,index) in dataList.list" :key="index">
+                    <td>{{ item.recordTime | formatDates}}</td>
+                    <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+                    <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                        <ul class="labelCol">
+                            <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
+                                v-show="item.contentColors.indexOf(color)  !== -1 "></li>
+                            <!--<li style="background-color: #00AEEF;"></li>-->
+                            <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
+                            <!--<li style="background-color: #ED1C24;"></li>-->
+                        </ul>
+                    </td>
+                    <td>{{workSates[item.workState - 1]}}</td>
+                    <td>{{item.bookResponsibleNames[0]}}</td>
+                    <td >
+                        <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
+                        <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
+                    </td>
+                </tr>
 
-     </table>
-     <span id="add" @click="getPush({path:'workAdd',name:'workAdd',params:{isShow: 3}})">
+            </table>
+            <span id="add" @click="getPush({path:'workAdd',name:'workAdd',params:{isShow: 3}})">
          <img src="../../assets/images/新增_04.png" style="width: 25px">
          新增
      </span>
-     <div class="block">
-         <el-pagination
-                 layout="prev, pager, next"
-                 :total="total"
-                 :page-size="pageSize"
-                 :current-page.sync="currentPage"
-                @current-change="changePage">
-         </el-pagination>
-     </div>
-     <el-dialog
-             title="提示"
-             :visible.sync="dialogVisible"
-             width="30%"
-             :before-close="handleClose">
-         <span>确定是否删除吗？</span>
-         <span slot="footer" class="dialog-footer">
+            <div class="block">
+                <el-pagination
+                        layout="prev, pager, next"
+                        :total="total"
+                        :page-size="pageSize"
+                        :current-page.sync="currentPage"
+                        @current-change="changePage">
+                </el-pagination>
+            </div>
+            <el-dialog
+                    title="提示"
+                    :visible.sync="dialogVisible"
+                    width="30%"
+                    :before-close="handleClose">
+                <span>确定是否删除吗？</span>
+                <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="deleteWorkBook">确 定</el-button>
          </span>
-     </el-dialog>
- </div>
+            </el-dialog>
+        </div>
+    </iscroll-view>
+
 </template>
 
 <script>
@@ -214,6 +217,34 @@ export default {
         searchKeys:function () {
             this.currentPage = 1
             this.getData()
+        },
+        refresh (iscroll) {
+        },
+        load (iscroll) {
+            // Load new data
+            if (iscroll.distY > 100){
+                if (this.currentPage < (this.total / 5)){
+                    this.currentPage += 1
+                    this.getData()
+                }else {
+                    this.$message({
+                        message: '已经最后一页',
+                        type: 'warning'
+                    });
+                }
+
+            } else if (iscroll.distY < -100) {
+                if (this.currentPage <= 1){
+                    this.$message({
+                        message: '已经是第1页',
+                        type: 'warning'
+                    });
+                }else {
+                    this.currentPage -= 1
+                    this.getData()
+                }
+
+            }
         }
     },
     mounted(){
@@ -239,9 +270,6 @@ export default {
     watch: {
         'selectList' :  'searchKeys',
         'recordTime' : 'getData',
-        // $route (to,from) {
-        //     from.meta.keepAlive = false;
-        // }
     },
 
 
@@ -343,6 +371,17 @@ export default {
     }
    .selectTime >.el-input__inner{
         padding-right: 0 ;
+    }
+    .scroll-view {
+        /* -- Attention: This line is extremely important in chrome 55+! -- */
+        touch-action: none;
+        /* -- Attention-- */
+        position: fixed;
+        top: 185px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
     }
 </style>
 <style lang="scss">

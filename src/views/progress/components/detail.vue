@@ -144,7 +144,6 @@
         },
         methods: {
             openOp: function (v,id) {
-                console.log(id);
                 this.isShowO = v
                 if (id !== ''){
                     sessionStorage.setItem('projectDetailId',id)
@@ -160,7 +159,6 @@
                         userId: JSON.parse(localStorage.getItem('accessToken')).user_id
                     }
                 }).then( res => {
-                    console.log(res);
                     this.projectDetail = res.data.data
 
                 })
@@ -177,7 +175,6 @@
                     method: 'post',
                     data: this.updataDetail
                 }).then( res => {
-                    console.log(res);
                     this.isShowO = false
                     this.newDetail.detail = ''
                     this.$message({
@@ -212,7 +209,6 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                     }
                 }).then( res => {
-                    console.log(res);
                     this.dataList = res.data.data
                     this.total = this.dataList.count
                     if (JSON.stringify(res.data.data.list) === '[]' ){
@@ -241,9 +237,15 @@
                 this.getProjectList()
             }
         },
+        beforeRouteLeave(to, from, next) {
+
+            this.$store.state.selectList = ''
+
+            next();
+        },
         mounted() {
-          this.getProjectList()
-           this.$store.state.selectList = ''
+            this.$store.state.selectList = ''
+            this.getProjectList()
         },
         computed: {
             ...mapState({

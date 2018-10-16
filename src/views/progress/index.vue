@@ -62,7 +62,6 @@
                     userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
                 }
             }).then( res => {
-                console.log(res);
                 this.progress = res.data.data
             })
         },

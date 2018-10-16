@@ -241,35 +241,7 @@ export default {
             }
         },
         add2: function (index) {
-            console.log('index' + index);
-           //  if (index === 0){
-           //      console.log('index = 0');
-           //      // this.inputValueA.push('')
-           //      this.$set(this.bookContent2a.bookContents,this.bookContent2a.bookContents.length,{
-           //          contentDesc : '',
-           //          contentCss : '',
-           //          contentNo: '1.'+  (this.bookContent2a.bookContents.length + 1),
-           //          parentNo: 1
-           //      })
-           //
-           //  }else  if (index === 1){
-           //     // this.inputValueB.push('')
-           //     let num2b = this.bookContent2b.bookContents.length
-           //     this.$set(this.bookContent2b.bookContents,num2b,{
-           //         contentDesc : '',
-           //         contentCss : '',
-           //         contentNo: '2.'+  (this.bookContent2b.bookContents.length + 1),
-           //         parentNo: 2
-           //     })
-           // } else if (index === 2) {
-           //     // this.inputValueC.push('')
-           //     this.$set(this.bookContent2c.bookContents,this.bookContent2c.bookContents.length,{
-           //         contentDesc : '',
-           //         contentCss : '',
-           //         contentNo: '3.'+  (this.bookContent2c.bookContents.length + 1),
-           //         parentNo: 3
-           //     })
-           // }
+            console.log('index' + index)
             this.$set(this.bookContent2[index].bookContents,this.bookContent2[index].bookContents.length,{
                 bookContents: [],
                 contentDesc : '',
@@ -401,7 +373,6 @@ export default {
                 this.contentCss = this.dataList.bookContent.contentCss
                 this.bookContent = this.dataList.bookContent.contentDesc
                 this.bookContent2 = this.dataList.bookContent.bookContents || ''
-                console.log(this.dataList.bookContent.bookContents);
                 if (this.bookContent2){
                     for (let i = 0; i < this.bookContent2.length; i++){
                         if (i === 0 ){
@@ -480,7 +451,6 @@ export default {
             //     console.log(res);
             // })
             this.axios.post('/ld/workBook/updateWorkBook',this.dataList).then( res => {
-                console.log(res);
                 if (res.data.status === '200'){
                     this.$message({
                         message: '修改成功',
@@ -515,7 +485,6 @@ export default {
     beforeRouteLeave(to, from, next) {
 
         if (to.path === "/workLog/index") {
-            console.log(this.isSave);
             to.meta.keepAlive = true;
         } else {
             to.meta.keepAlive = false;
