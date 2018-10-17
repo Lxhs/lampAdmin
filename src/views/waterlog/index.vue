@@ -1,16 +1,29 @@
 <template>
     <div class="main">
-        <div class="map">
-            <div class="mainMap"  v-show="isShow === 0">
-                <div class="coordinate" v-for="(item,index) in signList" :key="index" :style="{left:(item.latitude * (610 / 932)) + 'px',top:(item.longitude * (610 / 932) - 7) + 'px'}" >
-                    <icon :w="10" :h="10" name="坐标2" style="cursor: pointer;" @click.native="showPage(item.id)"></icon>
-                    <span class="cdSign">{{item.lampNum}}</span>
+        <iscroll-view class="scroll-view"  @pullUp="load" @pullDown="refresh">
+            <div class="map">
+                <div class="mainMap"  v-show="showMap === 1">
+
+                    <div class="coordinate" v-for="(item,index) in signList" :key="index" :style="{left:(item.latitude * (560 / 932)) + 'px',top:((item.longitude - 7)* (560 / 932)) + 'px'}" >
+                        <transition name="toTop" v-if="item.status === 1">
+                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;" :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id)"></icon>
+                        </transition>
+                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;" @click.native="showPage(item.id)"></icon>
+                    </div>
                 </div>
+                <div class="mainMap2"  v-show="showMap === 2">
+                    <div class="coordinate2" v-for="(item,index) in signList" :key="index" :style="{left:(item.latitude * (800 / 1316)) + 'px',top:((item.longitude - 7)* (800 / 1316)) + 'px'}" >
+                        <transition name="toTop" v-if="item.status === 1">
+                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;"  :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id)"></icon>
+                        </transition>
+                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;"  @click.native="showPage(item.id)"></icon>
+                    </div>
+                </div>
+                <!--<img src="../../../public/img/1.png" alt="">-->
+                <img :src="`${baseUrl}${index+1}.png`" v-for="(item,index) in 77" :key="index" v-show="index === isShow - 1" class="imgList">
+                <img src="../../assets/images/叉2X.png" alt="" class="goBack" v-show="isShow !== 0" @click="closeX" >
             </div>
-            <!--<img src="../../../public/img/1.png" alt="">-->
-            <img :src="`${baseUrl}${index+1}.png`" v-for="(item,index) in 77" :key="index" v-show="index === isShow - 1" class="imgList">
-            <img src="../../assets/images/叉2X.png" alt="" class="goBack" v-show="isShow !== 0" @click="closeX" >
-        </div>
+        </iscroll-view>
     </div>
 </template>
 
@@ -20,8 +33,12 @@
         data () {
             return {
                 isShow : 0,
+                showMap: 1,
                 baseUrl: './img/',
-                signList: ''
+                signList: '',
+                showHis: 1,
+                isFlicker: false,
+                colors:['#e82e16','#ea9518','#f1e729']
             }
         },
         methods: {
@@ -30,7 +47,7 @@
                     url: '/ld/waterlogging/getWaterloggingList',
                     method: 'post',
                     params: {
-                        userId : JSON.parse(localStorage.getItem('accessToken')).user_id,
+                        distinguish: this.showMap
                     }
                 }).then( res => {
                     console.log(res);
@@ -38,14 +55,50 @@
                 })
             },
             showPage: function (id) {
+                this.showMap = 0
                 this.isShow = id
             },
             closeX:function () {
                 this.isShow = 0
+                this.showMap = this.showHis
+            },
+            refresh (iscroll) {
+            },
+            load (iscroll) {
+                // Load new data
+                if (iscroll.distY > 50){
+                    if (this.showMap < 2 ){
+                        this.showMap += 1
+                        this.showHis += 1
+                        this.getData()
+                    }else {
+                        this.$message({
+                            message: '已经最后一张',
+                            type: 'warning'
+                        });
+                    }
+
+                } else if (iscroll.distY < -50) {
+                    if (this.showMap <= 1){
+                        this.$message({
+                            message: '已经是第1页',
+                            type: 'warning'
+                        });
+                    }else {
+                        this.showMap -= 1
+                        this.showHis -= 1
+                        this.getData()
+                    }
+
+                }
+            },
+            startInterval:function () {
+               this.isFlicker = !this.isFlicker
             }
         },
         mounted() {
             this.getData()
+            setInterval(this.startInterval,800)
         }
 
     }
@@ -88,6 +141,31 @@
                     }
                 }
             }
+            .mainMap2{
+                width: 800px;
+                height: 500px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                background: url("../../assets/images/总图2（底图）.png") no-repeat;
+                background-size: 100%;
+                .coordinate2{
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    .cdSign2{
+                        display: block;
+                        position: absolute;
+                        right: -21px;
+                        top: 2px;
+                        height: 15px;
+                        border: 1px solid #000;
+                        font-size: 5px;
+                        background-color: #fff;
+                    }
+                }
+            }
         }
         .imgList{
             width: 750px;
@@ -108,4 +186,32 @@
             z-index: 99;
         }
     }
+
+    .scroll-view {
+        /* -- Attention: This line is extremely important in chrome 55+! -- */
+        touch-action: none;
+        /* -- Attention-- */
+        position: fixed;
+        top: 185px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+    }
+
+    @keyframes flicker {
+        0% {opacity: 1;}
+        99%{opacity: 0}
+    }
+    @keyframes flickers {
+        0% {opacity: 0;}
+        99%{opacity: 1}
+    }
+    .toTop-enter-active{
+        animation: flicker 1s ;
+    }
+    .toTop-leave-active {
+        animation: flickers 1s ;
+    }
+
 </style>

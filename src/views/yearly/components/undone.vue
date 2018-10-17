@@ -97,8 +97,15 @@
                 this.getYearPlanList()
             }
         },
+        beforeRouteLeave(to, from, next) {
+
+            this.$store.state.selectList = ''
+
+            next();
+        },
         mounted() {
-           this.getYearPlanList()
+            this.$store.state.selectList = ''
+            this.getYearPlanList()
         },
         computed: {
             ...mapState({
