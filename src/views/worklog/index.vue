@@ -347,7 +347,7 @@ export default {
     .block{
         position: absolute;
         bottom: -55px;
-        right: 0;
+        right: 470px;
     }
     .labelCol{
         padding: 5px 10px;
