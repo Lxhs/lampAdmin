@@ -223,29 +223,46 @@ export default {
         },
         load (iscroll) {
             // Load new data
-            if (iscroll.distY > 50){
-                if (this.currentPage < (this.total / 5)){
-                    this.currentPage += 1
-                    this.getData()
-                }else {
-                    this.$message({
-                        message: '已经最后一页',
-                        type: 'warning'
-                    });
-                }
 
-            } else if (iscroll.distY < -50) {
-                if (this.currentPage <= 1){
-                    this.$message({
-                        message: '已经是第一张',
-                        type: 'warning'
-                    });
-                }else {
-                    this.currentPage -= 1
-                    this.getData()
+            //变量scrollTop是滚动条滚动时，距离顶部的距离
+            let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+            //变量windowHeight是可视区的高度
+            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            //变量scrollHeight是滚动条的总高度
+            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+            //滚动条到底部的条件
+
+
+
+
+            if (iscroll.distY < -20) {
+                if(scrollTop + windowHeight === scrollHeight){
+                    //写后台加载数据的函数
+                    console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
+                    if (this.pageSize < this.total ) {
+                        this.pageSize += 5
+                        this.getData()
+                    } else {
+                        this.$message({
+                            message: '暂无更多数据',
+                            type: 'warning'
+                        });
+                    }
                 }
 
             }
+            // } else if (iscroll.distY < -20) {
+            //     if (this.currentPage <= 1){
+            //         this.$message({
+            //             message: '已经是第一张',
+            //             type: 'warning'
+            //         });
+            //     }else {
+            //         this.currentPage -= 1
+            //         this.getData()
+            //     }
+            //
+            // }
         }
     },
     mounted(){
@@ -347,7 +364,7 @@ export default {
     .block{
         position: absolute;
         bottom: -55px;
-        right: 470px;
+        right: 0;
     }
     .labelCol{
         padding: 5px 10px;
@@ -377,12 +394,12 @@ export default {
         /* -- Attention: This line is extremely important in chrome 55+! -- */
         touch-action: none;
         /* -- Attention-- */
-        position: fixed;
-        top: 245px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        overflow: hidden;
+        width: 1000px;
+        position: relative;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        /*overflow: hidden;*/
     }
     .v-model{
         display: none;
