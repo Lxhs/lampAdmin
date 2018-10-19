@@ -5,8 +5,9 @@
          <img src="../../assets/images/新增_04.png" style="width: 25px">
          新增
      </span>
-            <iscroll-view class="scroll-view"  @pullUp="load" @pullDown="refresh">
-                <table>
+
+            <div class="wrapper" ref="wrapper">
+                <table class="content">
                     <tr>
                         <th style="width: 150px;">
                             <el-date-picker
@@ -20,9 +21,9 @@
                         </th>
                         <th>
                             <el-dropdown size="medium" trigger="click" placement="bottom">
-                      <span class="el-dropdown-link" style="cursor: pointer">
-                        标题<i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
+                          <span class="el-dropdown-link" style="cursor: pointer">
+                            标题<i class="el-icon-arrow-down el-icon--right"></i>
+                          </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item v-for="(item,index) in titleStates" :key="index" @click.native="changeTitleCss(index)">{{item}}</el-dropdown-item>
                                 </el-dropdown-menu>
@@ -31,9 +32,9 @@
                         <th>内容标记颜色</th>
                         <th>
                             <el-dropdown size="medium" trigger="click" placement="bottom">
-                      <span class="el-dropdown-link" style="cursor: pointer">
-                        状态<i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
+                          <span class="el-dropdown-link" style="cursor: pointer">
+                            状态<i class="el-icon-arrow-down el-icon--right"></i>
+                          </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item v-for="(item,index) in workSatesList" :key="index" @click.native="changeWorkState(index)">{{item}}</el-dropdown-item>
                                 </el-dropdown-menu>
@@ -43,36 +44,35 @@
                         <th>操作</th>
                     </tr>
                     <tr v-for="(item,index) in dataList.list" :key="index">
-                        <td>{{ item.recordTime | formatDates}}</td>
-                        <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
-                        <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-                            <ul class="labelCol">
-                                <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
-                                    v-show="item.contentColors.indexOf(color)  !== -1 "></li>
-                                <!--<li style="background-color: #00AEEF;"></li>-->
-                                <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
-                                <!--<li style="background-color: #ED1C24;"></li>-->
-                            </ul>
-                        </td>
-                        <td>{{workSates[item.workState - 1]}}</td>
-                        <td>{{item.bookResponsibleNames[0]}}</td>
-                        <td >
-                            <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
-                            <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
-                        </td>
-                    </tr>
-
-                </table>
-                <div class="block">
-                    <el-pagination
-                            layout="prev, pager, next"
-                            :total="total"
-                            :page-size="pageSize"
-                            :current-page.sync="currentPage"
-                            @current-change="changePage">
-                    </el-pagination>
-                </div>
-            </iscroll-view>
+                    <td>{{ item.recordTime | formatDates}}</td>
+                    <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+                    <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                        <ul class="labelCol">
+                            <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
+                                v-show="item.contentColors.indexOf(color)  !== -1 "></li>
+                            <!--<li style="background-color: #00AEEF;"></li>-->
+                            <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
+                            <!--<li style="background-color: #ED1C24;"></li>-->
+                        </ul>
+                    </td>
+                    <td>{{workSates[item.workState - 1]}}</td>
+                    <td>{{item.bookResponsibleNames[0]}}</td>
+                    <td >
+                        <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
+                        <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
+                    </td>
+                </tr>
+                 </table>
+            </div>
+            <div class="block">
+                <el-pagination
+                        layout="prev, pager, next"
+                        :total="total"
+                        :page-size="pageSize"
+                        :current-page.sync="currentPage"
+                        @current-change="changePage">
+                </el-pagination>
+            </div>
             <el-dialog
                     title="提示"
                     :visible.sync="dialogVisible"
@@ -90,6 +90,20 @@
 
 <script>
 import {mapState} from "vuex";
+import BScroll from 'better-scroll'
+const options = {
+    scrollY: true,
+    scrollbar:true,
+    click:true,
+    mouseWheel: {
+        speed: 20,
+        invert: false,
+        easeTime: 300
+    }
+}
+options.pullUpLoad = {
+    threshold: -20 // 在上拉到超过底部 20px 时，触发 pullingUp 事件
+}
 export default {
     name: "index",
     data() {
@@ -102,7 +116,7 @@ export default {
           detailContent: '',
           workBookIds:'',
           currentPage: 1,
-          pageSize: 5,
+          pageSize: 10,
           total: 0,
           titleStates:['所有','标注'],
           labelColor: ['#ED1C24','#F2ED84','#00AEEF','#8CC63F'],
@@ -148,6 +162,37 @@ export default {
                 this.dataList = res.data.data
                 console.log(this.dataList);
                 this.total = this.dataList.count
+
+                this.$nextTick(() => {
+                    if (!this.scroll) {
+                        this.scroll = new BScroll(this.$refs.wrapper, options)
+                        console.log(this.scroll);
+                        this.scroll.on('pullingUp', () => {
+                            console.log(213);
+                            if (this.pageSize < this.total ) {
+                                console.log(33333);
+                                this.pageSize += 5
+                                this.getData()
+                            } else {
+                                console.log(1231231);
+                                this.$message({
+                                    message: '暂无更多数据',
+                                    type: 'warning'
+                                });
+                            }
+                        })
+
+                        this.scroll.on('scroll', pos => {
+                            // console.log(pos);
+                        })
+                        this.scroll.on('scrollEnd', req => {
+                            // console.log(req);
+                        })
+                    } else {
+                        this.scroll.finishPullUp()
+                        this.scroll.refresh()
+                    }
+                })
 
                 if (JSON.stringify(res.data.data.list) === '[]' ){
                     this.$message({
@@ -265,7 +310,7 @@ export default {
             // }
         }
     },
-    mounted(){
+    created(){
         this.getData()
     },
     beforeRouteEnter(to, from, next){
@@ -299,6 +344,8 @@ export default {
         width: 1000px;
         margin: 50px auto;
         position: relative;
+        flex: 1;
+        height: 600px;
         table{
             width: 960px;
             margin: 0 auto;
@@ -393,6 +440,7 @@ export default {
     .scroll-view {
         /* -- Attention: This line is extremely important in chrome 55+! -- */
         touch-action: none;
+        /*touch-action: pan-y!important;*/
         /* -- Attention-- */
         width: 1000px;
         position: relative;
@@ -403,6 +451,16 @@ export default {
     }
     .v-model{
         display: none;
+    }
+    .wrapper{
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        background: #fff;
+        height: 600px;
     }
 </style>
 <style lang="scss">
