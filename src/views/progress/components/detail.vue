@@ -70,16 +70,17 @@
                             <td>
                                 <div style="overflow: auto;display: block;max-height: 250px;">
                                     <div class="note" v-for="(item,index) in projectDetail.projectNotes" :key="index">
-                                    <span class="detailTime">
-                                        {{item.notesTime}}
-                                    </span>
+                                        <span class="detailTime">
+                                            {{item.notesTime}}
+                                        </span>
                                         <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
                                         <el-input
                                                 type="textarea"
                                                 :rows="4"
                                                 placeholder="请输入内容"
                                                 v-model="item.detail"
-                                                class="postil">
+                                                class="postil"
+                                                >
                                         </el-input>
                                     </div>
                                 </div>
@@ -415,5 +416,11 @@
     .block{
         float: right;
         margin: 10px 20px 0 0;
+    }
+</style>
+
+<style lang="scss">
+    .postil > .el-textarea__inner{
+        padding-right: 30px;
     }
 </style>

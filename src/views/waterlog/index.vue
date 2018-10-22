@@ -22,6 +22,8 @@
                 <!--<img src="../../../public/img/1.png" alt="">-->
                 <img :src="`${baseUrl}${index+1}.png`" v-for="(item,index) in 77" :key="index" v-show="index === isShow - 1" class="imgList">
                 <img src="../../assets/images/叉2X.png" alt="" class="goBack" v-show="isShow !== 0" @click="closeX" >
+                <icon name="向左箭头" :w="48" :h="48" class="arrows" style="left: 10px;" @click.native="prePage" v-show="showMap !== 0"></icon>
+                <icon name="向右箭头" :w="48" :h="48" class="arrows" style="right: 10px;" @click.native="nextPage" v-show="showMap !== 0"></icon>
             </div>
         </iscroll-view>
     </div>
@@ -94,6 +96,30 @@
             },
             startInterval:function () {
                this.isFlicker = !this.isFlicker
+            },
+            prePage: function () {
+                if (this.showMap <= 1){
+                    this.$message({
+                        message: '已经是第1页',
+                        type: 'warning'
+                    });
+                }else {
+                    this.showMap -= 1
+                    this.showHis -= 1
+                    this.getData()
+                }
+            },
+            nextPage: function () {
+                if (this.showMap < 2 ){
+                    this.showMap += 1
+                    this.showHis += 1
+                    this.getData()
+                }else {
+                    this.$message({
+                        message: '已经最后一张',
+                        type: 'warning'
+                    });
+                }
             }
         },
         mounted() {
@@ -213,5 +239,10 @@
     .toTop-leave-active {
         animation: flickers 1s ;
     }
-
+    .arrows{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
 </style>
