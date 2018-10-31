@@ -6,22 +6,26 @@
 
                     <div class="coordinate" v-for="(item,index) in signList" :key="index" :style="{left:(item.latitude * (560 / 932)) + 'px',top:((item.longitude - 7)* (560 / 932)) + 'px'}" >
                         <transition name="toTop" v-if="item.status === 1">
-                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;" :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id)"></icon>
+                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;" :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id,item.transformerName,item.lampNum)"></icon>
                         </transition>
-                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;" @click.native="showPage(item.id)"></icon>
+                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;" @click.native="showPage(item.id,item.transformerName,item.lampNum)"></icon>
                     </div>
                 </div>
                 <div class="mainMap2"  v-show="showMap === 2">
                     <div class="coordinate2" v-for="(item,index) in signList" :key="index" :style="{left:(item.latitude * (800 / 1316)) + 'px',top:((item.longitude - 7)* (800 / 1316)) + 'px'}" >
                         <transition name="toTop" v-if="item.status === 1">
-                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;"  :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id)"></icon>
+                            <icon v-show="isFlicker" :w="14" :h="14" name="坐标2" style="cursor: pointer;"  :style="{color:colors[item.grade - 1]}" @click.native="showPage(item.id,item.transformerName,item.lampNum)"></icon>
                         </transition>
-                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;"  @click.native="showPage(item.id)"></icon>
+                        <icon v-if="item.status === 2" :w="14" :h="14" name="坐标2" style="cursor: pointer;color: #e82e16;"  @click.native="showPage(item.id,item.transformerName,item.lampNum)"></icon>
                     </div>
                 </div>
                 <!--<img src="../../../public/img/1.png" alt="">-->
                 <img :src="`${baseUrl}${index+1}.png`" v-for="(item,index) in 77" :key="index" v-show="index === isShow - 1" class="imgList">
                 <img src="../../assets/images/叉2X.png" alt="" class="goBack" v-show="isShow !== 0" @click="closeX" >
+                <div v-show="isShow !== 0" class="mapSign" >
+                    <p style="margin-bottom: 15px ">{{transformerName}}</p>
+                    <p>灯数：{{lampNum}}盏</p>
+                </div>
                 <icon name="向左箭头" :w="48" :h="48" class="arrows" style="left: 10px;" @click.native="prePage" v-show="showMap !== 0"></icon>
                 <icon name="向右箭头" :w="48" :h="48" class="arrows" style="right: 10px;" @click.native="nextPage" v-show="showMap !== 0"></icon>
             </div>
@@ -40,7 +44,9 @@
                 signList: '',
                 showHis: 1,
                 isFlicker: false,
-                colors:['#e82e16','#ea9518','#f1e729']
+                colors:['#e82e16','#ea9518','#f1e729'],
+                transformerName: '',
+                lampNum: 0
             }
         },
         methods: {
@@ -52,13 +58,16 @@
                         distinguish: this.showMap
                     }
                 }).then( res => {
-                    console.log(res);
+                    // console.log(1);
+                    // console.log(res);
                     this.signList = res.data.data
                 })
             },
-            showPage: function (id) {
+            showPage: function (id,transformerName,lampNum) {
                 this.showMap = 0
                 this.isShow = id
+                this.transformerName = transformerName
+                this.lampNum = lampNum
             },
             closeX:function () {
                 this.isShow = 0
@@ -244,5 +253,17 @@
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
+    }
+    .mapSign{
+        height: 60px;
+        background-color: #fff;
+        padding: 20px;
+        position: absolute;
+        right: 75px;
+        top: 60px;
+        border-radius: 20px;
+        p{
+            text-align: center;
+        }
     }
 </style>

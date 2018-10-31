@@ -19,6 +19,7 @@ export default new Vuex.Store({
       nameTitle: '',
       workLogCurrentPage: 1,
       workLogTotal: 0,
+      userName: ''
   },
   mutations: {
       [types.LOGIN]: (state, data) => {

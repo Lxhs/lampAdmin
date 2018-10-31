@@ -25,11 +25,11 @@
             <span>累计未完成工作</span>
             <table width="865px">
                 <thead style="border-spacing: 0">
-                    <td>部门</td>
+                    <td width="22%">部门</td>
                     <td style="padding-left: 10px" width="40%">内容</td>
                     <td style="text-align: center" width="38%">时间</td>
                 </thead>
-                <tr v-for="(item,index) in dataList.pages.list" :key="index">
+                <tr v-for="(item,index) in weekList" :key="index">
                     <td>{{item.name}}</td>
                     <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 400px"  @click="getDetail(item.id)">{{item.title}}</td>
                     <td>{{item.planTime | formatDates}}</td>
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
+
     export default {
         name: "index",
         data () {
@@ -74,8 +76,8 @@
                 })
             },
             changePage: function () {
-                this.weekList = this.dataList.pages.list.slice((this.currentPage - 1) * 5,this. currentPage * 5)
-
+                // this.weekList = this.dataList.pages.list.slice((this.currentPage - 1) * 5,this. currentPage * 5)
+                this.getData()
             },
             getDetail: function (weekId) {
                 sessionStorage.setItem('weekPlanId',weekId)
@@ -92,22 +94,39 @@
                     }*/
                 })
             },
+            getData: function () {
+                this.axios({
+                    method: 'post',
+                    url: '/ld/weekPlan/statistical',
+                    params:{
+                        pageNo: this.currentPage,
+                        pageSize: this.pageSize,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
+                    }
+                }).then( res => {
+                    // console.log(res);
+                    this.dataList = res.data.data
+
+                    this.total = this.dataList.pages.count
+                    this.weekList = this.dataList.pages.list
+
+                })
+            },
+            searchKeys: function () {
+                this.getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 0}})
+            }
         },
         mounted() {
-            this.axios({
-                method: 'post',
-                url: '/ld/weekPlan/statistical',
-                params:{
-                    pageNo: 1,
-                    pageSize: 10,
-                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
-                }
-            }).then( res => {
-                console.log(res);
-                this.dataList = res.data.data
-                this.total = this.dataList.pages.count
-                this.weekList = this.dataList.pages.list.slice(0,5)
+            this.$store.state.selectList = ''
+            this.getData()
+        },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
             })
+        },
+        watch: {
+            'selectList' :  'searchKeys',
         }
     }
 </script>

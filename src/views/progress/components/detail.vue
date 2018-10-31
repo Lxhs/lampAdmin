@@ -221,14 +221,17 @@
                 })
             },
             goBack: function () {
-                this.$router.push({
-                    path: 'index',
-                    name: 'progress',
-                    params: {
-                        isShow: 2,
-                        title: '工程进度'
-                    }
-                })
+                // this.$router.push({
+                //     path: 'index',
+                //     name: 'progress',
+                //     params: {
+                //         isShow: 2,
+                //         title: '工程进度'
+                //     }
+                // })
+                this.$store.state.selectList = ''
+                this.$router.go(-1)
+
             },
             changePage: function () {
                 this.getProjectList()
@@ -245,7 +248,7 @@
             next();
         },
         mounted() {
-            this.$store.state.selectList = ''
+            // this.$store.state.selectList = ''
             this.getProjectList()
         },
         computed: {

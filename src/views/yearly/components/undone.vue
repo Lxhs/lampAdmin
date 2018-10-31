@@ -71,7 +71,7 @@
                     }
                 }).then( res => {
                     this.dataList = res.data.data
-                    console.log(res);
+                    // console.log(res);
                     this.total = this.dataList.count
                     if (JSON.stringify(res.data.data.list) === '[]' ){
                         this.$message({
@@ -104,7 +104,6 @@
             next();
         },
         mounted() {
-            this.$store.state.selectList = ''
             this.getYearPlanList()
         },
         computed: {

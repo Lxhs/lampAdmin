@@ -14,7 +14,7 @@
               <!--0278888888-->
           </div>
       </div>
-      <div class="navBar">
+      <div class="navBar" :class="bgClass">
           <ul>
               <li >
                   <router-link :to="{ name: 'yearly', params: { isShow: 2, title: '年度计划工作' }}"  :class="path === 'yearly' ? 'is-active' : ''">年度计划</router-link>
@@ -28,7 +28,7 @@
               <li>
                   <router-link :to="{ name: 'waterLog', params: { isShow: 2, title: '渍水情况'}}" :class="path === 'waterLog' ? 'is-active' : ''">渍水情况</router-link>
               </li>
-              <li>
+              <li v-show="this.$store.state.userName === 'thinkgem'">
                   <router-link :to="{ name: 'workLog', params: { isShow: 1 }}" :class="path === 'workLog' ? 'is-active' : ''">工作日志</router-link>
               </li>
           </ul>
@@ -43,7 +43,8 @@ export default {
     name: "Layout",
     data() {
         return {
-            path: ''
+            path: '',
+            bgClass: 'bgClass1'
         }
     },
     methods: {
@@ -52,6 +53,34 @@ export default {
             let strs = []
             strs = str.split("/")
             this.path = strs[1]
+            if (this.$store.state.userName === 'thinkgem') {
+                if (this.path === 'yearly'){
+                    this.bgClass = 'bgClass1'
+                } else if (this.path === 'weekly') {
+                    this.bgClass = 'bgClass2'
+                }else if (this.path === 'progress') {
+                    this.bgClass = 'bgClass3'
+                }else if (this.path === 'waterLog') {
+                    this.bgClass = 'bgClass4'
+                }else if (this.path === 'workLog') {
+                    this.bgClass = 'bgClass5'
+                }else if (this.path === 'home') {
+                    this.bgClass = 'bgClass1'
+                }
+            } else{
+                if (this.path === 'yearly'){
+                    this.bgClass = 'bgClass21'
+                } else if (this.path === 'weekly') {
+                    this.bgClass = 'bgClass22'
+                }else if (this.path === 'progress') {
+                    this.bgClass = 'bgClass23'
+                }else if (this.path === 'waterLog') {
+                    this.bgClass = 'bgClass24'
+                }else if (this.path === 'home') {
+                    this.bgClass = 'bgClass21'
+                }
+            }
+
         },
         loginOut: function () {
             console.log(1);
@@ -95,9 +124,13 @@ export default {
     components: {
         appMain
     },
+    mounted(){
+        this.changeClass()
+    },
     watch:{
         '$route':'changeClass'
     },
+
 }
 </script>
 
@@ -132,7 +165,7 @@ export default {
         }
         .navBar{
             width: 1000px;
-            background: url("../../assets/images/导航栏.png");
+            /*background: url("../../assets/images/b1.png") no-repeat;*/
             margin-top: 10px;
             ul{
                 margin-left: 33px;
@@ -169,5 +202,32 @@ export default {
                 }
             }
         }
+    }
+    .bgClass1{
+        background: url("../../assets/images/b1.png") no-repeat;
+    }
+    .bgClass2{
+        background: url("../../assets/images/b2.png") no-repeat;
+    }
+    .bgClass3{
+        background: url("../../assets/images/b3.png") no-repeat;
+    }
+    .bgClass4{
+        background: url("../../assets/images/b4.png") no-repeat;
+    }
+    .bgClass5{
+        background: url("../../assets/images/b5.png") no-repeat;
+    }
+    .bgClass21{
+        background: url("../../assets/images/b21.png") no-repeat;
+    }
+    .bgClass22{
+        background: url("../../assets/images/b22.png") no-repeat;
+    }
+    .bgClass23{
+        background: url("../../assets/images/b23.png") no-repeat;
+    }
+    .bgClass24{
+        background: url("../../assets/images/b24.png") no-repeat;
     }
 </style>

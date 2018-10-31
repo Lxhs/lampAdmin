@@ -142,6 +142,7 @@ export default {
                 }
             }).then(res => {
                 console.log(res);
+                this.$store.state.userName = this.loginForm.username
                 if (res.data.status === '200') {
                     localStorage.setItem('accessToken',JSON.stringify({
                         session_id: res.data.data.sessionId,

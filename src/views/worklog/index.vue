@@ -158,23 +158,23 @@ export default {
                     recordTime: this.recordTime
                 }
             }).then(res => {
-                console.log(res);
+                // console.log(res);
                 this.dataList = res.data.data
-                console.log(this.dataList);
+                // console.log(this.dataList);
                 this.total = this.dataList.count
 
                 this.$nextTick(() => {
                     if (!this.scroll) {
                         this.scroll = new BScroll(this.$refs.wrapper, options)
-                        console.log(this.scroll);
+                        // console.log(this.scroll);
                         this.scroll.on('pullingUp', () => {
-                            console.log(213);
+                            // console.log(213);
                             if (this.pageSize < this.total ) {
-                                console.log(33333);
+                                // console.log(33333);
                                 this.pageSize += 5
                                 this.getData()
                             } else {
-                                console.log(1231231);
+                                // console.log(1231231);
                                 this.$message({
                                     message: '暂无更多数据',
                                     type: 'warning'
@@ -315,13 +315,13 @@ export default {
     },
     beforeRouteEnter(to, from, next){
         next(vm=>{
-            console.log(vm)
+            // console.log(vm)
             // 每次进入路由执行
             vm.getData()
         })
     },
     beforeRouteLeave(to, from, next) {
-        console.log(123);
+        // console.log(123);
         // from.meta.keepAlive = false;
         next();
     },

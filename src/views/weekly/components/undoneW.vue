@@ -26,6 +26,7 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
     export default {
         name: "undoneW",
         data() {
@@ -64,20 +65,46 @@
                         pageNo: this.currentPage,
                         pageSize: this.pageSize,
                         userId: JSON.parse(localStorage.getItem('accessToken')).user_id,
-                        queryConditions: sessionStorage.getItem('weekQueryConditions')
+                        queryConditions: sessionStorage.getItem('weekQueryConditions'),
+                        query: this.selectList
                     }
                 }).then( res => {
                     console.log(res);
                     this.dataList = res.data.data
                     this.total = this.dataList.count
+                    if (res.data.data.count === 0 ){
+                        // console.log(1123123);
+                        this.$message({
+                            message: '暂无数据',
+                            type: 'warning'
+                        });
+                    }
                 })
             },
             goBack: function () {
                 this.$router.go(-1)
+            },
+            searchKeys: function () {
+                this.currentPage = 1
+                this.getWeekList()
             }
+        },
+        beforeRouteLeave(to, from, next) {
+
+            this.$store.state.selectList = ''
+
+            next();
         },
         mounted() {
             this.getWeekList()
+        },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
+            })
+        },
+        watch: {
+            'selectList' :  'searchKeys',
         }
     }
 </script>

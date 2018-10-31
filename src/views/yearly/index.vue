@@ -77,6 +77,7 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
     export default {
         name: "index",
         data() {
@@ -106,6 +107,9 @@
                     }*/
                 })
             },
+            searchKeys: function () {
+                this.getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 0}})
+            },
             getDetail: function (yearId) {
                 sessionStorage.setItem('yearDetailId',yearId)
                 this.$router.push({
@@ -122,31 +126,46 @@
                 })
             },
             changePageF: function () {
-                this.firstList = this.dataList.firstHalfPages.list.slice((this.firstCurrentPage - 1) * 5,this. firstCurrentPage * 5)
+                // this.firstList = this.dataList.firstHalfPages.list.slice((this.firstCurrentPage - 1) * 5,this. firstCurrentPage * 5)
+                this.getData()
             },
             changePageS: function () {
-                this.secList = this.dataList.secondHalfPages.list.slice((this.secCurrentPage - 1) * 5,this. secCurrentPage * 5)
+                // this.secList = this.dataList.secondHalfPages.list.slice((this.secCurrentPage - 1) * 5,this. secCurrentPage * 5)
+                this.getData()
+            },
+            getData: function () {
+                this.axios({
+                    method: 'post',
+                    url: '/ld/yearPlan/statistical',
+                    params:{
+                        firstPageNo: this.firstCurrentPage,
+                        firstPageSize: this.firstPageSize,
+                        secondPageNo: this.secCurrentPage ,
+                        secondPageSize: this.secPageSize,
+                        userId: JSON.parse(localStorage.getItem('accessToken')).user_id
+                    }
+                }).then( res => {
+                    this.dataList = res.data.data
+                    // console.log(res);
+                    this.firstList = this.dataList.firstHalfPages.list
+                    this.secList = this.dataList.secondHalfPages.list
+                    this.firstTotal = this.dataList.firstHalfPages.count
+                    this.secTotal = this.dataList.secondHalfPages.count
+                })
             }
         },
         mounted() {
-            this.axios({
-                method: 'post',
-                url: '/ld/yearPlan/statistical',
-                params:{
-                    pageNo: 1,
-                    pageSize: 10,
-                    userId: JSON.parse(localStorage.getItem('accessToken')).user_id
-                }
-            }).then( res => {
-                this.dataList = res.data.data
-                console.log(res);
-                this.firstList = this.dataList.firstHalfPages.list.slice(0,5)
-                this.secList = this.dataList.secondHalfPages.list.slice(0,5)
-                this.firstTotal = this.dataList.firstHalfPages.count
-                this.secTotal = this.dataList.secondHalfPages.count
+            this.$store.state.selectList = ''
+            this.getData()
+        },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
             })
+        },
+        watch: {
+            'selectList' :  'searchKeys',
         }
-
     }
 </script>
 

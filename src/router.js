@@ -54,7 +54,7 @@ const router =  new Router({
              meta:{
                   requireAuth:true,
                  title: '年度计划工作',
-                 isShow: 2,
+                 isShow: 1,
                  keepAlive: false
              },
                 component: () => import('./views/yearly/index'),
@@ -95,12 +95,12 @@ const router =  new Router({
       children:[{
           path: 'index',
           name: 'weekly',
-          meta:{requireAuth:true, isShow: 2, title: '每周完成工作情况',keepAlive: false},
+          meta:{requireAuth:true, isShow: 1, title: '每周完成工作情况',keepAlive: false},
           component: () => import('./views/weekly/index')
       },{
           path: 'undone',
           name: 'undoneW',
-          meta:{requireAuth:true,isShow: 2, title: '累计未完成工作情况',keepAlive: false},
+          meta:{requireAuth:true,isShow: 1, title: '累计未完成工作情况',keepAlive: false},
           component: () => import('./views/weekly/components/undoneW')
       },{
           path: 'detail',
@@ -120,7 +120,7 @@ const router =  new Router({
         children:[{
             path: 'index',
             name: 'progress',
-            meta:{requireAuth:true,isShow: 2,title: '工程进度',keepAlive: false},
+            meta:{requireAuth:true,isShow: 1,title: '工程进度',keepAlive: false},
             component: () => import('./views/progress/index')
         },
             {

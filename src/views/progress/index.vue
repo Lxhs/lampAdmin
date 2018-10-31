@@ -10,6 +10,7 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
     export default {
         name: "index",
         data() {
@@ -52,9 +53,13 @@
                     })
                 }
 
+            },
+            searchKeys: function () {
+                this.getPush({path:'detail',name:'detailP',params:{isShow: 1,projectProgress: 0}})
             }
         },
         mounted() {
+            this.$store.state.selectList = ''
             this.axios({
                 url: '/ld/project/statistical',
                 method: 'post',
@@ -65,6 +70,14 @@
                 this.progress = res.data.data
             })
         },
+        computed: {
+            ...mapState({
+                selectList: state=> state.selectList
+            })
+        },
+        watch: {
+            'selectList' :  'searchKeys',
+        }
 
     }
 </script>
