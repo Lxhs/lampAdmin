@@ -44,25 +44,25 @@
                         <th>操作</th>
                     </tr>
                     <tr v-for="(item,index) in dataList.list" :key="index">
-                    <td>{{ item.recordTime | formatDates}}</td>
-                    <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
-                    <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-                        <ul class="labelCol">
-                            <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
-                                v-show="item.contentColors.indexOf(color)  !== -1 "></li>
-                            <!--<li style="background-color: #00AEEF;"></li>-->
-                            <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
-                            <!--<li style="background-color: #ED1C24;"></li>-->
-                        </ul>
-                    </td>
-                    <td>{{workSates[item.workState - 1]}}</td>
-                    <td>{{item.bookResponsibleNames[0]}}</td>
-                    <td >
-                        <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
-                        <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
-                    </td>
-                </tr>
-                 </table>
+                        <td>{{ item.recordTime | formatDates}}</td>
+                        <td style="cursor: pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 340px;width: 340px " :class="item.titleCss === '' ? '' : 'is-marker'" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3, data:item}})" >{{item.title}}</td>
+                        <td style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                            <ul class="labelCol">
+                                <li v-for="(color,index) in labelColor" :style="{backgroundColor: color}" :key="index"
+                                    v-show="item.contentColors.indexOf(color)  !== -1 "></li>
+                                <!--<li style="background-color: #00AEEF;"></li>-->
+                                <!--<li style="background-color: #F2ED84;" class="is-activeC"></li>-->
+                                <!--<li style="background-color: #ED1C24;"></li>-->
+                            </ul>
+                        </td>
+                        <td>{{workSates[item.workState - 1]}}</td>
+                        <td>{{item.bookResponsibleNames[0]}}</td>
+                        <td >
+                            <span style="cursor: pointer" @click="getPush({path:'workEdit',name:'workEdit',params:{isShow: 3,data:item}})" >修改</span>
+                            <span style="cursor: pointer; margin-left: 10px" @click="dialogVisible = true; workBookIds = item.id">删除</span>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="block">
                 <el-pagination

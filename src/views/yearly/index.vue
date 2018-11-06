@@ -17,10 +17,10 @@
                    <th>未完成</th>
                </tr>
                <tr>
-                   <td>{{dataList.yearPlanNumber}}</td>
-                   <td>{{dataList.firstHalfYearPlanNumber}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 6}})">{{dataList.yearPlanNumber}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 4}})">{{dataList.firstHalfYearPlanNumber}}</td>
                    <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 1}})">{{dataList.firstHalfYearUndone}}</td>
-                   <td>{{dataList.secondHalfPlanNumber}}</td>
+                   <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 5}})">{{dataList.secondHalfPlanNumber}}</td>
                    <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 2}})">{{dataList.secondHalfUndone}}</td>
                    <td style="cursor: pointer" @click="getPush({path:'undone',name:'undone',params:{isShow: 1,queryConditions: 3}})">{{dataList.undone}}</td>
                </tr>

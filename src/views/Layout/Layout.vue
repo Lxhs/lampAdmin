@@ -28,7 +28,7 @@
               <li>
                   <router-link :to="{ name: 'waterLog', params: { isShow: 2, title: '渍水情况'}}" :class="path === 'waterLog' ? 'is-active' : ''">渍水情况</router-link>
               </li>
-              <li v-show="this.$store.state.userName === 'thinkgem'">
+              <li v-show="userName === 'thinkgem'">
                   <router-link :to="{ name: 'workLog', params: { isShow: 1 }}" :class="path === 'workLog' ? 'is-active' : ''">工作日志</router-link>
               </li>
           </ul>
@@ -44,7 +44,8 @@ export default {
     data() {
         return {
             path: '',
-            bgClass: 'bgClass1'
+            bgClass: 'bgClass1',
+            userName: ''
         }
     },
     methods: {
@@ -53,7 +54,7 @@ export default {
             let strs = []
             strs = str.split("/")
             this.path = strs[1]
-            if (this.$store.state.userName === 'thinkgem') {
+            if (sessionStorage.getItem('userName') === 'thinkgem') {
                 if (this.path === 'yearly'){
                     this.bgClass = 'bgClass1'
                 } else if (this.path === 'weekly') {
@@ -126,6 +127,7 @@ export default {
     },
     mounted(){
         this.changeClass()
+        this.userName = sessionStorage.getItem('userName')
     },
     watch:{
         '$route':'changeClass'

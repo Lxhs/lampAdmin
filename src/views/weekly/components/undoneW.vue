@@ -147,7 +147,7 @@
                 }
                 td{
                     &:nth-child(2){
-                        font-size: 12px;
+                        font-size: 16px;
                         border-left: 1px solid #A8A8AA;
                         border-right: 1px solid #A8A8AA;
                     }

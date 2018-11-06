@@ -73,7 +73,7 @@
                                         <span class="detailTime">
                                             {{item.notesTime}}
                                         </span>
-                                        <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
+                                        <icon v-show="userName === 'thinkgem'" name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
                                         <el-input
                                                 type="textarea"
                                                 :rows="4"
@@ -83,8 +83,11 @@
                                                 >
                                         </el-input>
                                     </div>
+                                    <div v-show=" !projectDetail.projectNotes||!projectDetail.projectNotes.length">
+                                        暂无批注
+                                    </div>
                                 </div>
-                                <div class="note">
+                                <div class="note" v-show="userName === 'thinkgem'">
                                     <span class="detailTime" style="background-color: #67C23A;">
                                         新增
                                     </span>
@@ -102,7 +105,7 @@
                 </div>
                 <div class="btnList">
                     <el-button type="info" @click="openOp(false)" plain>返回</el-button>
-                    <el-button type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
+                    <el-button v-show="userName === 'thinkgem'" type="primary" id="dBtn"  @click="dialogVisible = true">保存</el-button>
                 </div>
 
 
@@ -140,13 +143,14 @@
                 total:0,
                 pageSize: 5,
                 currentPage: 1,
-
+                userName: ''
             }
         },
         methods: {
             openOp: function (v,id) {
                 this.isShowO = v
-                if (id !== ''){
+                if (id){
+                    console.log(123123);
                     sessionStorage.setItem('projectDetailId',id)
                     this.getProjectDetail(id)
                 }
@@ -250,6 +254,7 @@
         mounted() {
             // this.$store.state.selectList = ''
             this.getProjectList()
+            this.userName = sessionStorage.getItem('userName')
         },
         computed: {
             ...mapState({

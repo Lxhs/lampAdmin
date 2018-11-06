@@ -11,7 +11,7 @@
             </tr>
             <tr>
                 <td>时间</td>
-                <td>{{dataList.planTime | formatDates}}</td>
+                <td>{{dataList.planTime}}</td>
             </tr>
             <tr>
                 <td>事件详情</td>
@@ -29,7 +29,7 @@
                                     <span class="detailTime">
                                         {{item.notesTime}}
                                     </span>
-                            <icon name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
+                            <icon v-show="userName === 'thinkgem'" name="垃圾箱" :w="12" :h="12"  class="deleteIcon" @click.native="deleteNotes(index)" ></icon>
                             <el-input
                                     type="textarea"
                                     :rows="4"
@@ -38,8 +38,11 @@
                                     class="postil">
                             </el-input>
                         </div>
+                        <div v-show=" !dataList.yearPlanNotes||!dataList.yearPlanNotes.length">
+                            暂无批注
+                        </div>
                     </div>
-                    <div class="note">
+                    <div class="note" v-show="userName === 'thinkgem'">
                                     <span class="detailTime" style="background-color: #67C23A;">
                                         新增
                                     </span>
@@ -56,7 +59,7 @@
         </table>
         <div class="goBack">
             <el-button style="margin-left: 30px" type="info" plain  @click="$router.go(-1)">返回</el-button>
-            <el-button type="primary" plain @click="dialogVisible = true">保存</el-button>
+            <el-button v-show="userName === 'thinkgem'" type="primary" plain @click="dialogVisible = true">保存</el-button>
             <!--<div class="btn" @click="dialogVisible = true">保存</div>-->
         </div>
         <el-dialog
@@ -83,7 +86,8 @@
                     detail: ''
                 },
                 updataDetail: '',
-                dialogVisible: false
+                dialogVisible: false,
+                userName: ''
             }
         },
         methods: {
@@ -127,6 +131,7 @@
         },
         mounted() {
             this.getYearPlanList()
+            this.userName = sessionStorage.getItem('userName')
         }
     }
 </script>

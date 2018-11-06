@@ -14,9 +14,9 @@
                     <td>数量</td>
                 </tr>
                 <tr>
-                    <td>{{dataList.lastWeeksPlan}}</td>
+                    <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 4}})">{{dataList.lastWeeksPlan}}</td>
                     <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 1}})">{{dataList.lastWeeksUndone}}</td>
-                    <td>{{dataList.weeksPlan}}</td>
+                    <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 5}})">{{dataList.weeksPlan}}</td>
                     <td style="cursor: pointer;" @click="getPush({path:'undone',name:'undoneW',params:{isShow: 2, title: '累计未完成工作情况',queryConditions: 3}})">{{dataList.undone}}</td>
                 </tr>
             </table>
